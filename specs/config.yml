@@ -1,0 +1,134 @@
+provider:
+  name: ai
+
+data_sources:
+  app_group:
+    read:
+      path: /apps/ai.core.eda.nokia.com
+      method: GET
+
+  mcp_prompt_template:
+    read:
+      path: /apps/ai.core.eda.nokia.com/v1/mcpprompttemplates/{name}
+      method: GET
+
+  mcp_prompt_template_list:
+    read:
+      path: /apps/ai.core.eda.nokia.com/v1/mcpprompttemplates
+      method: GET
+
+  mcp_resource_definition:
+    read:
+      path: /apps/ai.core.eda.nokia.com/v1/mcpresourcedefinitions/{name}
+      method: GET
+
+  mcp_resource_definition_list:
+    read:
+      path: /apps/ai.core.eda.nokia.com/v1/mcpresourcedefinitions
+      method: GET
+
+  mcp_settings:
+    read:
+      path: /apps/ai.core.eda.nokia.com/v1/mcpsettings/{name}
+      method: GET
+
+  mcp_settings_list:
+    read:
+      path: /apps/ai.core.eda.nokia.com/v1/mcpsettings
+      method: GET
+
+  mcp_tool_definition:
+    read:
+      path: /apps/ai.core.eda.nokia.com/v1/mcptooldefinitions/{name}
+      method: GET
+
+  mcp_tool_definition_list:
+    read:
+      path: /apps/ai.core.eda.nokia.com/v1/mcptooldefinitions
+      method: GET
+
+  provider:
+    read:
+      path: /apps/ai.core.eda.nokia.com/v1/providers/{name}
+      method: GET
+
+  provider_list:
+    read:
+      path: /apps/ai.core.eda.nokia.com/v1/providers
+      method: GET
+
+  resource_list:
+    read:
+      path: /apps/ai.core.eda.nokia.com/v1
+      method: GET
+
+resources:
+  mcp_prompt_template:
+    create:
+      path: /apps/ai.core.eda.nokia.com/v1/mcpprompttemplates
+      method: POST
+    read:
+      path: /apps/ai.core.eda.nokia.com/v1/mcpprompttemplates/{name}
+      method: GET
+    update:
+      path: /apps/ai.core.eda.nokia.com/v1/mcpprompttemplates/{name}
+      method: PUT
+    delete:
+      path: /apps/ai.core.eda.nokia.com/v1/mcpprompttemplates/{name}
+      method: DELETE
+
+  mcp_resource_definition:
+    create:
+      path: /apps/ai.core.eda.nokia.com/v1/mcpresourcedefinitions
+      method: POST
+    read:
+      path: /apps/ai.core.eda.nokia.com/v1/mcpresourcedefinitions/{name}
+      method: GET
+    update:
+      path: /apps/ai.core.eda.nokia.com/v1/mcpresourcedefinitions/{name}
+      method: PUT
+    delete:
+      path: /apps/ai.core.eda.nokia.com/v1/mcpresourcedefinitions/{name}
+      method: DELETE
+
+  mcp_settings:
+    create:
+      path: /apps/ai.core.eda.nokia.com/v1/mcpsettings
+      method: POST
+    read:
+      path: /apps/ai.core.eda.nokia.com/v1/mcpsettings/{name}
+      method: GET
+    update:
+      path: /apps/ai.core.eda.nokia.com/v1/mcpsettings/{name}
+      method: PUT
+    delete:
+      path: /apps/ai.core.eda.nokia.com/v1/mcpsettings/{name}
+      method: DELETE
+
+  mcp_tool_definition:
+    create:
+      path: /apps/ai.core.eda.nokia.com/v1/mcptooldefinitions
+      method: POST
+    read:
+      path: /apps/ai.core.eda.nokia.com/v1/mcptooldefinitions/{name}
+      method: GET
+    update:
+      path: /apps/ai.core.eda.nokia.com/v1/mcptooldefinitions/{name}
+      method: PUT
+    delete:
+      path: /apps/ai.core.eda.nokia.com/v1/mcptooldefinitions/{name}
+      method: DELETE
+
+  provider:
+    create:
+      path: /apps/ai.core.eda.nokia.com/v1/providers
+      method: POST
+    read:
+      path: /apps/ai.core.eda.nokia.com/v1/providers/{name}
+      method: GET
+    update:
+      path: /apps/ai.core.eda.nokia.com/v1/providers/{name}
+      method: PUT
+    delete:
+      path: /apps/ai.core.eda.nokia.com/v1/providers/{name}
+      method: DELETE

@@ -3144,7 +3144,7 @@
                                                 {
                                                     "name": "type",
                                                     "string": {
-                                                        "computed_optional_required": "optional",
+                                                        "computed_optional_required": "required",
                                                         "description": "The content type",
                                                         "validators": [
                                                             {

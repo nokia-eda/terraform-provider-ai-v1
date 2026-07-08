@@ -59,11 +59,14 @@ Optional:
 <a id="nestedatt--spec--content"></a>
 ### Nested Schema for `spec.content`
 
+Required:
+
+- `type` (String) The content type
+
 Optional:
 
 - `resource` (Attributes) Resource content (see [below for nested schema](#nestedatt--spec--content--resource))
 - `text` (Attributes) Text content (see [below for nested schema](#nestedatt--spec--content--text))
-- `type` (String) The content type
 
 <a id="nestedatt--spec--content--resource"></a>
 ### Nested Schema for `spec.content.resource`

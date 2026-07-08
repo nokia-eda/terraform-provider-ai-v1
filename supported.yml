@@ -1,0 +1,74 @@
+datasources:
+  - model_name: app_group
+    oas_endpoint: /apps/ai.core.eda.nokia.com
+    oas_schema: AppGroup
+  - model_name: resource_list
+    oas_endpoint: /apps/ai.core.eda.nokia.com/v1
+    oas_schema: ResourceList
+  - model_name: mcp_prompt_template_list
+    oas_endpoint: /apps/ai.core.eda.nokia.com/v1/mcpprompttemplates
+    oas_schema: com.nokia.eda.core.ai.v1.MCPPromptTemplateList
+  - model_name: mcp_prompt_template
+    oas_endpoint: /apps/ai.core.eda.nokia.com/v1/mcpprompttemplates/{name}
+    oas_schema: com.nokia.eda.core.ai.v1.MCPPromptTemplate
+  - model_name: mcp_resource_definition_list
+    oas_endpoint: /apps/ai.core.eda.nokia.com/v1/mcpresourcedefinitions
+    oas_schema: com.nokia.eda.core.ai.v1.MCPResourceDefinitionList
+  - model_name: mcp_resource_definition
+    oas_endpoint: /apps/ai.core.eda.nokia.com/v1/mcpresourcedefinitions/{name}
+    oas_schema: com.nokia.eda.core.ai.v1.MCPResourceDefinition
+  - model_name: mcp_settings_list
+    oas_endpoint: /apps/ai.core.eda.nokia.com/v1/mcpsettings
+    oas_schema: com.nokia.eda.core.ai.v1.MCPSettingsList
+  - model_name: mcp_settings
+    oas_endpoint: /apps/ai.core.eda.nokia.com/v1/mcpsettings/{name}
+    oas_schema: com.nokia.eda.core.ai.v1.MCPSettings
+  - model_name: mcp_tool_definition_list
+    oas_endpoint: /apps/ai.core.eda.nokia.com/v1/mcptooldefinitions
+    oas_schema: com.nokia.eda.core.ai.v1.MCPToolDefinitionList
+  - model_name: mcp_tool_definition
+    oas_endpoint: /apps/ai.core.eda.nokia.com/v1/mcptooldefinitions/{name}
+    oas_schema: com.nokia.eda.core.ai.v1.MCPToolDefinition
+  - model_name: provider_list
+    oas_endpoint: /apps/ai.core.eda.nokia.com/v1/providers
+    oas_schema: com.nokia.eda.core.ai.v1.ProviderList
+  - model_name: provider
+    oas_endpoint: /apps/ai.core.eda.nokia.com/v1/providers/{name}
+    oas_schema: com.nokia.eda.core.ai.v1.Provider
+
+resources:
+  - model_name: mcp_prompt_template
+    oas_endpoint: /apps/ai.core.eda.nokia.com/v1/mcpprompttemplates
+    oas_schema: com.nokia.eda.core.ai.v1.MCPPromptTemplate
+  - model_name: mcp_resource_definition
+    oas_endpoint: /apps/ai.core.eda.nokia.com/v1/mcpresourcedefinitions
+    oas_schema: com.nokia.eda.core.ai.v1.MCPResourceDefinition
+  - model_name: mcp_settings
+    oas_endpoint: /apps/ai.core.eda.nokia.com/v1/mcpsettings
+    oas_schema: com.nokia.eda.core.ai.v1.MCPSettings
+  - model_name: mcp_tool_definition
+    oas_endpoint: /apps/ai.core.eda.nokia.com/v1/mcptooldefinitions
+    oas_schema: com.nokia.eda.core.ai.v1.MCPToolDefinition
+  - model_name: provider
+    oas_endpoint: /apps/ai.core.eda.nokia.com/v1/providers
+    oas_schema: com.nokia.eda.core.ai.v1.Provider
+
+qualified:
+  datasources:
+    - oas_schema: IntentTargets
+      get: /apps/ai.core.eda.nokia.com/v1/mcpprompttemplates/{name}/_targets
+    - oas_schema: ResourceHistory
+      get: /apps/ai.core.eda.nokia.com/v1/mcpprompttemplates/{name}/_revs
+    - oas_schema: UIResult
+      get: /apps/ai.core.eda.nokia.com/v1/_ui/{pathname}
+    - oas_schema: com.nokia.eda.core.ai.v1.MCPPromptTemplate_DeletedResources
+      get: /apps/ai.core.eda.nokia.com/v1/mcpprompttemplates/_deleted
+    - oas_schema: com.nokia.eda.core.ai.v1.MCPResourceDefinition_DeletedResources
+      get: /apps/ai.core.eda.nokia.com/v1/mcpresourcedefinitions/_deleted
+    - oas_schema: com.nokia.eda.core.ai.v1.MCPSettings_DeletedResources
+      get: /apps/ai.core.eda.nokia.com/v1/mcpsettings/_deleted
+    - oas_schema: com.nokia.eda.core.ai.v1.MCPToolDefinition_DeletedResources
+      get: /apps/ai.core.eda.nokia.com/v1/mcptooldefinitions/_deleted
+    - oas_schema: com.nokia.eda.core.ai.v1.Provider_DeletedResources
+      get: /apps/ai.core.eda.nokia.com/v1/providers/_deleted
+  resources:

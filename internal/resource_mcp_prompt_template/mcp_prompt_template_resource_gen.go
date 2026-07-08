@@ -192,7 +192,7 @@ func McpPromptTemplateResourceSchema(ctx context.Context) schema.Schema {
 									MarkdownDescription: "Text content",
 								},
 								"type": schema.StringAttribute{
-									Optional:            true,
+									Required:            true,
 									Description:         "The content type",
 									MarkdownDescription: "The content type",
 									Validators: []validator.String{

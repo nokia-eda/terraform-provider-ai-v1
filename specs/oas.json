@@ -144,24 +144,6 @@
           "value": {
             "description": "This field would be set to the value which the user intends to put in the\nfield referenced by the \"path\" field.  The type of the value should match\nthe type of the field as indicated by the schema of the resource being\npatched.",
             "example": "example for a string field",
-            "oneOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "number"
-              },
-              {
-                "type": "boolean"
-              },
-              {
-                "items": {},
-                "type": "array"
-              },
-              {
-                "type": "object"
-              }
-            ],
             "type": "object"
           },
           "x-permissive": {
@@ -1012,7 +994,8 @@
                       "title": "Resource",
                       "type": "object",
                       "x-eda-nokia-com": {
-                        "ui-order-priority": 330
+                        "ui-order-priority": 330,
+                        "ui-visible-if": "self.type === \"resource\""
                       }
                     },
                     "text": {
@@ -1027,7 +1010,8 @@
                       "title": "Text",
                       "type": "object",
                       "x-eda-nokia-com": {
-                        "ui-order-priority": 320
+                        "ui-order-priority": 320,
+                        "ui-visible-if": "self.type === \"text\""
                       }
                     },
                     "type": {
@@ -1039,10 +1023,19 @@
                       "title": "Type",
                       "type": "string",
                       "x-eda-nokia-com": {
+                        "ui-conditions": [
+                          {
+                            "condition": "(type === \"text\" \u0026\u0026 isSet(\"self.text\") \u0026\u0026 !isSet(\"self.resource\")) || (type === \"resource\" \u0026\u0026 isSet(\"self.resource\") \u0026\u0026 !isSet(\"self.text\"))",
+                            "errorMsg": "Type must match content."
+                          }
+                        ],
                         "ui-order-priority": 310
                       }
                     }
                   },
+                  "required": [
+                    "type"
+                  ],
                   "type": "object"
                 },
                 "title": "Content",

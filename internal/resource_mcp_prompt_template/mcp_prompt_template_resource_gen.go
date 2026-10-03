@@ -8,6 +8,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/attr"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/booldefault"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringdefault"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -123,23 +124,46 @@ func McpPromptTemplateResourceSchema(ctx context.Context) schema.Schema {
 					"arguments": schema.ListNestedAttribute{
 						NestedObject: schema.NestedAttributeObject{
 							Attributes: map[string]schema.Attribute{
+								"autocomplete": schema.StringAttribute{
+									Optional:            true,
+									Computed:            true,
+									Description:         "Autocomplete string for the argument\nExamples:\n- '{\"type\":\"gvr\", \"group\":\"core.eda.nokia.com\", \"version\":\"v1\", \"resource\":\"namespaces\"}'\n- '{\"type\":\"query\", \"table\":\".namespace.node.srl\", \"field\": \".namespace.node.name\", \"where\": \"version = \\\"26.3.1\\\"\"}'\n- '{\"type\":\"labelselector\", \"group\":\"core.eda.nokia.com\", \"kind\":\"TopoNode\"}'",
+									MarkdownDescription: "Autocomplete string for the argument\nExamples:\n- '{\"type\":\"gvr\", \"group\":\"core.eda.nokia.com\", \"version\":\"v1\", \"resource\":\"namespaces\"}'\n- '{\"type\":\"query\", \"table\":\".namespace.node.srl\", \"field\": \".namespace.node.name\", \"where\": \"version = \\\"26.3.1\\\"\"}'\n- '{\"type\":\"labelselector\", \"group\":\"core.eda.nokia.com\", \"kind\":\"TopoNode\"}'",
+								},
+								"choices": schema.ListAttribute{
+									ElementType:         types.StringType,
+									Optional:            true,
+									Computed:            true,
+									Description:         "Choices for the argument",
+									MarkdownDescription: "Choices for the argument",
+								},
+								"default": schema.StringAttribute{
+									Optional:            true,
+									Computed:            true,
+									Description:         "Whether the argument is hidden",
+									MarkdownDescription: "Whether the argument is hidden",
+								},
 								"description": schema.StringAttribute{
 									Optional:            true,
+									Computed:            true,
 									Description:         "A brief description of the argument",
 									MarkdownDescription: "A brief description of the argument",
 								},
 								"name": schema.StringAttribute{
 									Optional:            true,
+									Computed:            true,
 									Description:         "Argument name to be used in the prompt template",
 									MarkdownDescription: "Argument name to be used in the prompt template",
 								},
 								"required": schema.BoolAttribute{
 									Optional:            true,
+									Computed:            true,
 									Description:         "Whether the argument is required",
 									MarkdownDescription: "Whether the argument is required",
 								},
 								"title": schema.StringAttribute{
 									Optional:            true,
+									Computed:            true,
 									Description:         "A human friendly title for the argument",
 									MarkdownDescription: "A human friendly title for the argument",
 								},
@@ -151,6 +175,7 @@ func McpPromptTemplateResourceSchema(ctx context.Context) schema.Schema {
 							},
 						},
 						Optional:            true,
+						Computed:            true,
 						Description:         "List of arguments for the prompt",
 						MarkdownDescription: "List of arguments for the prompt",
 					},
@@ -161,6 +186,7 @@ func McpPromptTemplateResourceSchema(ctx context.Context) schema.Schema {
 									Attributes: map[string]schema.Attribute{
 										"uri": schema.StringAttribute{
 											Optional:            true,
+											Computed:            true,
 											Description:         "The resource URI",
 											MarkdownDescription: "The resource URI",
 										},
@@ -171,6 +197,7 @@ func McpPromptTemplateResourceSchema(ctx context.Context) schema.Schema {
 										},
 									},
 									Optional:            true,
+									Computed:            true,
 									Description:         "Resource content",
 									MarkdownDescription: "Resource content",
 								},
@@ -178,6 +205,7 @@ func McpPromptTemplateResourceSchema(ctx context.Context) schema.Schema {
 									Attributes: map[string]schema.Attribute{
 										"template": schema.StringAttribute{
 											Optional:            true,
+											Computed:            true,
 											Description:         "The text content template",
 											MarkdownDescription: "The text content template",
 										},
@@ -188,6 +216,7 @@ func McpPromptTemplateResourceSchema(ctx context.Context) schema.Schema {
 										},
 									},
 									Optional:            true,
+									Computed:            true,
 									Description:         "Text content",
 									MarkdownDescription: "Text content",
 								},
@@ -215,8 +244,16 @@ func McpPromptTemplateResourceSchema(ctx context.Context) schema.Schema {
 					},
 					"description": schema.StringAttribute{
 						Optional:            true,
+						Computed:            true,
 						Description:         "A brief description of the prompt",
 						MarkdownDescription: "A brief description of the prompt",
+					},
+					"enabled": schema.BoolAttribute{
+						Optional:            true,
+						Computed:            true,
+						Description:         "Whether the prompt template is enabled",
+						MarkdownDescription: "Whether the prompt template is enabled",
+						Default:             booldefault.StaticBool(true),
 					},
 					"title": schema.StringAttribute{
 						Required:            true,
@@ -1703,6 +1740,24 @@ func (t SpecType) ValueFromObject(ctx context.Context, in basetypes.ObjectValue)
 			fmt.Sprintf(`description expected to be basetypes.StringValue, was: %T`, descriptionAttribute))
 	}
 
+	enabledAttribute, ok := attributes["enabled"]
+
+	if !ok {
+		diags.AddError(
+			"Attribute Missing",
+			`enabled is missing from object`)
+
+		return nil, diags
+	}
+
+	enabledVal, ok := enabledAttribute.(basetypes.BoolValue)
+
+	if !ok {
+		diags.AddError(
+			"Attribute Wrong Type",
+			fmt.Sprintf(`enabled expected to be basetypes.BoolValue, was: %T`, enabledAttribute))
+	}
+
 	titleAttribute, ok := attributes["title"]
 
 	if !ok {
@@ -1729,6 +1784,7 @@ func (t SpecType) ValueFromObject(ctx context.Context, in basetypes.ObjectValue)
 		Arguments:   argumentsVal,
 		Content:     contentVal,
 		Description: descriptionVal,
+		Enabled:     enabledVal,
 		Title:       titleVal,
 		state:       attr.ValueStateKnown,
 	}, diags
@@ -1851,6 +1907,24 @@ func NewSpecValue(attributeTypes map[string]attr.Type, attributes map[string]att
 			fmt.Sprintf(`description expected to be basetypes.StringValue, was: %T`, descriptionAttribute))
 	}
 
+	enabledAttribute, ok := attributes["enabled"]
+
+	if !ok {
+		diags.AddError(
+			"Attribute Missing",
+			`enabled is missing from object`)
+
+		return NewSpecValueUnknown(), diags
+	}
+
+	enabledVal, ok := enabledAttribute.(basetypes.BoolValue)
+
+	if !ok {
+		diags.AddError(
+			"Attribute Wrong Type",
+			fmt.Sprintf(`enabled expected to be basetypes.BoolValue, was: %T`, enabledAttribute))
+	}
+
 	titleAttribute, ok := attributes["title"]
 
 	if !ok {
@@ -1877,6 +1951,7 @@ func NewSpecValue(attributeTypes map[string]attr.Type, attributes map[string]att
 		Arguments:   argumentsVal,
 		Content:     contentVal,
 		Description: descriptionVal,
+		Enabled:     enabledVal,
 		Title:       titleVal,
 		state:       attr.ValueStateKnown,
 	}, diags
@@ -1953,12 +2028,13 @@ type SpecValue struct {
 	Arguments   basetypes.ListValue   `tfsdk:"arguments"`
 	Content     basetypes.ListValue   `tfsdk:"content"`
 	Description basetypes.StringValue `tfsdk:"description"`
+	Enabled     basetypes.BoolValue   `tfsdk:"enabled"`
 	Title       basetypes.StringValue `tfsdk:"title"`
 	state       attr.ValueState
 }
 
 func (v SpecValue) ToTerraformValue(ctx context.Context) (tftypes.Value, error) {
-	attrTypes := make(map[string]tftypes.Type, 4)
+	attrTypes := make(map[string]tftypes.Type, 5)
 
 	var val tftypes.Value
 	var err error
@@ -1970,13 +2046,14 @@ func (v SpecValue) ToTerraformValue(ctx context.Context) (tftypes.Value, error) 
 		ElemType: ContentValue{}.Type(ctx),
 	}.TerraformType(ctx)
 	attrTypes["description"] = basetypes.StringType{}.TerraformType(ctx)
+	attrTypes["enabled"] = basetypes.BoolType{}.TerraformType(ctx)
 	attrTypes["title"] = basetypes.StringType{}.TerraformType(ctx)
 
 	objectType := tftypes.Object{AttributeTypes: attrTypes}
 
 	switch v.state {
 	case attr.ValueStateKnown:
-		vals := make(map[string]tftypes.Value, 4)
+		vals := make(map[string]tftypes.Value, 5)
 
 		val, err = v.Arguments.ToTerraformValue(ctx)
 
@@ -2001,6 +2078,14 @@ func (v SpecValue) ToTerraformValue(ctx context.Context) (tftypes.Value, error) 
 		}
 
 		vals["description"] = val
+
+		val, err = v.Enabled.ToTerraformValue(ctx)
+
+		if err != nil {
+			return tftypes.NewValue(objectType, tftypes.UnknownValue), err
+		}
+
+		vals["enabled"] = val
 
 		val, err = v.Title.ToTerraformValue(ctx)
 
@@ -2105,6 +2190,7 @@ func (v SpecValue) ToObjectValue(ctx context.Context) (basetypes.ObjectValue, di
 			ElemType: ContentValue{}.Type(ctx),
 		},
 		"description": basetypes.StringType{},
+		"enabled":     basetypes.BoolType{},
 		"title":       basetypes.StringType{},
 	}
 
@@ -2122,6 +2208,7 @@ func (v SpecValue) ToObjectValue(ctx context.Context) (basetypes.ObjectValue, di
 			"arguments":   arguments,
 			"content":     content,
 			"description": v.Description,
+			"enabled":     v.Enabled,
 			"title":       v.Title,
 		})
 
@@ -2155,6 +2242,10 @@ func (v SpecValue) Equal(o attr.Value) bool {
 		return false
 	}
 
+	if !v.Enabled.Equal(other.Enabled) {
+		return false
+	}
+
 	if !v.Title.Equal(other.Title) {
 		return false
 	}
@@ -2179,6 +2270,7 @@ func (v SpecValue) AttributeTypes(ctx context.Context) map[string]attr.Type {
 			ElemType: ContentValue{}.Type(ctx),
 		},
 		"description": basetypes.StringType{},
+		"enabled":     basetypes.BoolType{},
 		"title":       basetypes.StringType{},
 	}
 }
@@ -2207,6 +2299,60 @@ func (t ArgumentsType) ValueFromObject(ctx context.Context, in basetypes.ObjectV
 	var diags diag.Diagnostics
 
 	attributes := in.Attributes()
+
+	autocompleteAttribute, ok := attributes["autocomplete"]
+
+	if !ok {
+		diags.AddError(
+			"Attribute Missing",
+			`autocomplete is missing from object`)
+
+		return nil, diags
+	}
+
+	autocompleteVal, ok := autocompleteAttribute.(basetypes.StringValue)
+
+	if !ok {
+		diags.AddError(
+			"Attribute Wrong Type",
+			fmt.Sprintf(`autocomplete expected to be basetypes.StringValue, was: %T`, autocompleteAttribute))
+	}
+
+	choicesAttribute, ok := attributes["choices"]
+
+	if !ok {
+		diags.AddError(
+			"Attribute Missing",
+			`choices is missing from object`)
+
+		return nil, diags
+	}
+
+	choicesVal, ok := choicesAttribute.(basetypes.ListValue)
+
+	if !ok {
+		diags.AddError(
+			"Attribute Wrong Type",
+			fmt.Sprintf(`choices expected to be basetypes.ListValue, was: %T`, choicesAttribute))
+	}
+
+	defaultAttribute, ok := attributes["default"]
+
+	if !ok {
+		diags.AddError(
+			"Attribute Missing",
+			`default is missing from object`)
+
+		return nil, diags
+	}
+
+	defaultVal, ok := defaultAttribute.(basetypes.StringValue)
+
+	if !ok {
+		diags.AddError(
+			"Attribute Wrong Type",
+			fmt.Sprintf(`default expected to be basetypes.StringValue, was: %T`, defaultAttribute))
+	}
 
 	descriptionAttribute, ok := attributes["description"]
 
@@ -2285,11 +2431,14 @@ func (t ArgumentsType) ValueFromObject(ctx context.Context, in basetypes.ObjectV
 	}
 
 	return ArgumentsValue{
-		Description: descriptionVal,
-		Name:        nameVal,
-		Required:    requiredVal,
-		Title:       titleVal,
-		state:       attr.ValueStateKnown,
+		Autocomplete: autocompleteVal,
+		Choices:      choicesVal,
+		Default:      defaultVal,
+		Description:  descriptionVal,
+		Name:         nameVal,
+		Required:     requiredVal,
+		Title:        titleVal,
+		state:        attr.ValueStateKnown,
 	}, diags
 }
 
@@ -2356,6 +2505,60 @@ func NewArgumentsValue(attributeTypes map[string]attr.Type, attributes map[strin
 		return NewArgumentsValueUnknown(), diags
 	}
 
+	autocompleteAttribute, ok := attributes["autocomplete"]
+
+	if !ok {
+		diags.AddError(
+			"Attribute Missing",
+			`autocomplete is missing from object`)
+
+		return NewArgumentsValueUnknown(), diags
+	}
+
+	autocompleteVal, ok := autocompleteAttribute.(basetypes.StringValue)
+
+	if !ok {
+		diags.AddError(
+			"Attribute Wrong Type",
+			fmt.Sprintf(`autocomplete expected to be basetypes.StringValue, was: %T`, autocompleteAttribute))
+	}
+
+	choicesAttribute, ok := attributes["choices"]
+
+	if !ok {
+		diags.AddError(
+			"Attribute Missing",
+			`choices is missing from object`)
+
+		return NewArgumentsValueUnknown(), diags
+	}
+
+	choicesVal, ok := choicesAttribute.(basetypes.ListValue)
+
+	if !ok {
+		diags.AddError(
+			"Attribute Wrong Type",
+			fmt.Sprintf(`choices expected to be basetypes.ListValue, was: %T`, choicesAttribute))
+	}
+
+	defaultAttribute, ok := attributes["default"]
+
+	if !ok {
+		diags.AddError(
+			"Attribute Missing",
+			`default is missing from object`)
+
+		return NewArgumentsValueUnknown(), diags
+	}
+
+	defaultVal, ok := defaultAttribute.(basetypes.StringValue)
+
+	if !ok {
+		diags.AddError(
+			"Attribute Wrong Type",
+			fmt.Sprintf(`default expected to be basetypes.StringValue, was: %T`, defaultAttribute))
+	}
+
 	descriptionAttribute, ok := attributes["description"]
 
 	if !ok {
@@ -2433,11 +2636,14 @@ func NewArgumentsValue(attributeTypes map[string]attr.Type, attributes map[strin
 	}
 
 	return ArgumentsValue{
-		Description: descriptionVal,
-		Name:        nameVal,
-		Required:    requiredVal,
-		Title:       titleVal,
-		state:       attr.ValueStateKnown,
+		Autocomplete: autocompleteVal,
+		Choices:      choicesVal,
+		Default:      defaultVal,
+		Description:  descriptionVal,
+		Name:         nameVal,
+		Required:     requiredVal,
+		Title:        titleVal,
+		state:        attr.ValueStateKnown,
 	}, diags
 }
 
@@ -2509,19 +2715,27 @@ func (t ArgumentsType) ValueType(ctx context.Context) attr.Value {
 var _ basetypes.ObjectValuable = ArgumentsValue{}
 
 type ArgumentsValue struct {
-	Description basetypes.StringValue `tfsdk:"description"`
-	Name        basetypes.StringValue `tfsdk:"name"`
-	Required    basetypes.BoolValue   `tfsdk:"required"`
-	Title       basetypes.StringValue `tfsdk:"title"`
-	state       attr.ValueState
+	Autocomplete basetypes.StringValue `tfsdk:"autocomplete"`
+	Choices      basetypes.ListValue   `tfsdk:"choices"`
+	Default      basetypes.StringValue `tfsdk:"default"`
+	Description  basetypes.StringValue `tfsdk:"description"`
+	Name         basetypes.StringValue `tfsdk:"name"`
+	Required     basetypes.BoolValue   `tfsdk:"required"`
+	Title        basetypes.StringValue `tfsdk:"title"`
+	state        attr.ValueState
 }
 
 func (v ArgumentsValue) ToTerraformValue(ctx context.Context) (tftypes.Value, error) {
-	attrTypes := make(map[string]tftypes.Type, 4)
+	attrTypes := make(map[string]tftypes.Type, 7)
 
 	var val tftypes.Value
 	var err error
 
+	attrTypes["autocomplete"] = basetypes.StringType{}.TerraformType(ctx)
+	attrTypes["choices"] = basetypes.ListType{
+		ElemType: types.StringType,
+	}.TerraformType(ctx)
+	attrTypes["default"] = basetypes.StringType{}.TerraformType(ctx)
 	attrTypes["description"] = basetypes.StringType{}.TerraformType(ctx)
 	attrTypes["name"] = basetypes.StringType{}.TerraformType(ctx)
 	attrTypes["required"] = basetypes.BoolType{}.TerraformType(ctx)
@@ -2531,7 +2745,31 @@ func (v ArgumentsValue) ToTerraformValue(ctx context.Context) (tftypes.Value, er
 
 	switch v.state {
 	case attr.ValueStateKnown:
-		vals := make(map[string]tftypes.Value, 4)
+		vals := make(map[string]tftypes.Value, 7)
+
+		val, err = v.Autocomplete.ToTerraformValue(ctx)
+
+		if err != nil {
+			return tftypes.NewValue(objectType, tftypes.UnknownValue), err
+		}
+
+		vals["autocomplete"] = val
+
+		val, err = v.Choices.ToTerraformValue(ctx)
+
+		if err != nil {
+			return tftypes.NewValue(objectType, tftypes.UnknownValue), err
+		}
+
+		vals["choices"] = val
+
+		val, err = v.Default.ToTerraformValue(ctx)
+
+		if err != nil {
+			return tftypes.NewValue(objectType, tftypes.UnknownValue), err
+		}
+
+		vals["default"] = val
 
 		val, err = v.Description.ToTerraformValue(ctx)
 
@@ -2594,7 +2832,38 @@ func (v ArgumentsValue) String() string {
 func (v ArgumentsValue) ToObjectValue(ctx context.Context) (basetypes.ObjectValue, diag.Diagnostics) {
 	var diags diag.Diagnostics
 
+	var choicesVal basetypes.ListValue
+	switch {
+	case v.Choices.IsUnknown():
+		choicesVal = types.ListUnknown(types.StringType)
+	case v.Choices.IsNull():
+		choicesVal = types.ListNull(types.StringType)
+	default:
+		var d diag.Diagnostics
+		choicesVal, d = types.ListValue(types.StringType, v.Choices.Elements())
+		diags.Append(d...)
+	}
+
+	if diags.HasError() {
+		return types.ObjectUnknown(map[string]attr.Type{
+			"autocomplete": basetypes.StringType{},
+			"choices": basetypes.ListType{
+				ElemType: types.StringType,
+			},
+			"default":     basetypes.StringType{},
+			"description": basetypes.StringType{},
+			"name":        basetypes.StringType{},
+			"required":    basetypes.BoolType{},
+			"title":       basetypes.StringType{},
+		}), diags
+	}
+
 	attributeTypes := map[string]attr.Type{
+		"autocomplete": basetypes.StringType{},
+		"choices": basetypes.ListType{
+			ElemType: types.StringType,
+		},
+		"default":     basetypes.StringType{},
 		"description": basetypes.StringType{},
 		"name":        basetypes.StringType{},
 		"required":    basetypes.BoolType{},
@@ -2612,10 +2881,13 @@ func (v ArgumentsValue) ToObjectValue(ctx context.Context) (basetypes.ObjectValu
 	objVal, diags := types.ObjectValue(
 		attributeTypes,
 		map[string]attr.Value{
-			"description": v.Description,
-			"name":        v.Name,
-			"required":    v.Required,
-			"title":       v.Title,
+			"autocomplete": v.Autocomplete,
+			"choices":      choicesVal,
+			"default":      v.Default,
+			"description":  v.Description,
+			"name":         v.Name,
+			"required":     v.Required,
+			"title":        v.Title,
 		})
 
 	return objVal, diags
@@ -2634,6 +2906,18 @@ func (v ArgumentsValue) Equal(o attr.Value) bool {
 
 	if v.state != attr.ValueStateKnown {
 		return true
+	}
+
+	if !v.Autocomplete.Equal(other.Autocomplete) {
+		return false
+	}
+
+	if !v.Choices.Equal(other.Choices) {
+		return false
+	}
+
+	if !v.Default.Equal(other.Default) {
+		return false
 	}
 
 	if !v.Description.Equal(other.Description) {
@@ -2665,6 +2949,11 @@ func (v ArgumentsValue) Type(ctx context.Context) attr.Type {
 
 func (v ArgumentsValue) AttributeTypes(ctx context.Context) map[string]attr.Type {
 	return map[string]attr.Type{
+		"autocomplete": basetypes.StringType{},
+		"choices": basetypes.ListType{
+			ElemType: types.StringType,
+		},
+		"default":     basetypes.StringType{},
 		"description": basetypes.StringType{},
 		"name":        basetypes.StringType{},
 		"required":    basetypes.BoolType{},

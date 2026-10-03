@@ -22,7 +22,6 @@ description: |-
 ### Optional
 
 - `hash` (String) resource content will be returned as it was at the time of this git hash
-- `spec` (Attributes) ProviderSpec defines the desired state of Provider (see [below for nested schema](#nestedatt--spec))
 
 ### Read-Only
 
@@ -31,53 +30,8 @@ description: |-
 - `deviations` (Attributes) (see [below for nested schema](#nestedatt--deviations))
 - `kind` (String)
 - `metadata` (Attributes) (see [below for nested schema](#nestedatt--metadata))
+- `spec` (Attributes) ProviderSpec defines the desired state of Provider (see [below for nested schema](#nestedatt--spec))
 - `status` (Attributes) ProviderStatus defines the observed state of Provider (see [below for nested schema](#nestedatt--status))
-
-<a id="nestedatt--spec"></a>
-### Nested Schema for `spec`
-
-Optional:
-
-- `endpoint` (Attributes) The provider endpoint (see [below for nested schema](#nestedatt--spec--endpoint))
-- `models` (Attributes List) The models supported by the provider (see [below for nested schema](#nestedatt--spec--models))
-- `title` (String) A human friendly title for the provider
-
-<a id="nestedatt--spec--endpoint"></a>
-### Nested Schema for `spec.endpoint`
-
-Optional:
-
-- `api_key` (String) The provider API key
-- `description` (String) The endpoint description
-- `headers` (Attributes List) Additional headers to be included in the request (see [below for nested schema](#nestedatt--spec--endpoint--headers))
-- `url` (String) The endpoint URL
-
-<a id="nestedatt--spec--endpoint--headers"></a>
-### Nested Schema for `spec.endpoint.headers`
-
-Optional:
-
-- `name` (String) Header name
-- `value` (String) Header value
-
-
-
-<a id="nestedatt--spec--models"></a>
-### Nested Schema for `spec.models`
-
-Optional:
-
-- `description` (String) Model description
-- `name` (String) Model name
-- `priority` (String) Priority sets the request scheduling priority.
-Valid for OpenAI models only. Maps to the service_tier API field (lowercased).
-- `reasoning_level` (List of String) Model reasoning level
-- `support_nested_responses` (Boolean) SupportNestedResponses controls whether the model's output supports nested responses
-- `temperature` (String) Temperature controls how random vs deterministic the model's output is
-- `type` (String) API type
-- `usage` (List of String) Model intended use
-
-
 
 <a id="nestedatt--alarms"></a>
 ### Nested Schema for `alarms`
@@ -107,6 +61,52 @@ Read-Only:
 - `labels` (Map of String)
 - `name` (String)
 - `namespace` (String)
+
+
+<a id="nestedatt--spec"></a>
+### Nested Schema for `spec`
+
+Read-Only:
+
+- `endpoint` (Attributes) The provider endpoint (see [below for nested schema](#nestedatt--spec--endpoint))
+- `models` (Attributes List) The models supported by the provider (see [below for nested schema](#nestedatt--spec--models))
+- `title` (String) A human friendly title for the provider
+
+<a id="nestedatt--spec--endpoint"></a>
+### Nested Schema for `spec.endpoint`
+
+Read-Only:
+
+- `api_key` (String, Sensitive) The provider API key
+- `description` (String) The endpoint description
+- `headers` (Attributes List) Additional headers to be included in the request (see [below for nested schema](#nestedatt--spec--endpoint--headers))
+- `url` (String) The endpoint URL
+
+<a id="nestedatt--spec--endpoint--headers"></a>
+### Nested Schema for `spec.endpoint.headers`
+
+Read-Only:
+
+- `name` (String) Header name
+- `value` (String) Header value
+
+
+
+<a id="nestedatt--spec--models"></a>
+### Nested Schema for `spec.models`
+
+Read-Only:
+
+- `description` (String) Model description
+- `name` (String) Model name
+- `priority` (String) Priority sets the request scheduling priority.
+Valid for OpenAI models only. Maps to the service_tier API field (lowercased).
+- `reasoning_level` (List of String) Model reasoning level
+- `support_nested_responses` (Boolean) SupportNestedResponses controls whether the model's output supports nested responses
+- `temperature` (String) Temperature controls how random vs deterministic the model's output is
+- `type` (String) API type
+- `usage` (List of String) Model intended use
+
 
 
 <a id="nestedatt--status"></a>

@@ -50,6 +50,7 @@ Optional:
 
 - `capabilities` (Attributes) MCP capabilities (see [below for nested schema](#nestedatt--spec--capabilities))
 - `enabled` (Boolean) Enable EDA MCP Server
+- `instructions` (String) MCP Server Instructions
 
 <a id="nestedatt--spec--capabilities"></a>
 ### Nested Schema for `spec.capabilities`

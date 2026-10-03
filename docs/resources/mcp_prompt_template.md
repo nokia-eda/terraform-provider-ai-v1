@@ -55,6 +55,7 @@ Optional:
 
 - `arguments` (Attributes List) List of arguments for the prompt (see [below for nested schema](#nestedatt--spec--arguments))
 - `description` (String) A brief description of the prompt
+- `enabled` (Boolean) Whether the prompt template is enabled
 
 <a id="nestedatt--spec--content"></a>
 ### Nested Schema for `spec.content`
@@ -90,6 +91,13 @@ Optional:
 
 Optional:
 
+- `autocomplete` (String) Autocomplete string for the argument
+Examples:
+- '{"type":"gvr", "group":"core.eda.nokia.com", "version":"v1", "resource":"namespaces"}'
+- '{"type":"query", "table":".namespace.node.srl", "field": ".namespace.node.name", "where": "version = \"26.3.1\""}'
+- '{"type":"labelselector", "group":"core.eda.nokia.com", "kind":"TopoNode"}'
+- `choices` (List of String) Choices for the argument
+- `default` (String) Whether the argument is hidden
 - `description` (String) A brief description of the argument
 - `name` (String) Argument name to be used in the prompt template
 - `required` (Boolean) Whether the argument is required

@@ -57,6 +57,7 @@ Optional:
 - `arguments` (Attributes List) List of arguments for the resource.
 Present for resource templates if autocomplete is required. (see [below for nested schema](#nestedatt--spec--arguments))
 - `description` (String) A brief description of the resource
+- `enabled` (Boolean) Whether the resource definition is enabled
 - `mime_type` (String) The MIME type of the resource
 
 <a id="nestedatt--spec--provider"></a>
@@ -117,7 +118,13 @@ Optional:
 Optional:
 
 - `autocomplete` (String) Autocomplete string for the argument
-Example: '{"group":"core.eda.nokia.com", "version":"v1", "resource":"namespaces"}'
+Examples:
+- '{"type":"gvr", "group":"core.eda.nokia.com", "version":"v1", "resource":"namespaces"}'
+- '{"type":"query", "table":".namespace.node.srl", "field": ".namespace.node.name", "where": "version = \"26.3.1\""}'
+- '{"type":"labelselector", "group":"core.eda.nokia.com", "kind":"TopoNode"}'
+- `choices` (List of String) Choices for the argument
+- `default` (String) Default value for the argument
+- `description` (String) A brief description of the argument
 - `name` (String) Argument name to be used in the resource template
 
 

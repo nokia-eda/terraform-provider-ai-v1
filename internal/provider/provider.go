@@ -262,6 +262,8 @@ func (p *aiProvider) Metadata(ctx context.Context, req provider.MetadataRequest,
 func (p *aiProvider) DataSources(ctx context.Context) []func() datasource.DataSource {
 	return []func() datasource.DataSource{
 		NewAppGroupDataSource,
+		NewMcpClientDataSource,
+		NewMcpClientListDataSource,
 		NewMcpPromptTemplateDataSource,
 		NewMcpPromptTemplateListDataSource,
 		NewMcpResourceDefinitionDataSource,
@@ -278,6 +280,7 @@ func (p *aiProvider) DataSources(ctx context.Context) []func() datasource.DataSo
 
 func (p *aiProvider) Resources(ctx context.Context) []func() resource.Resource {
 	return []func() resource.Resource{
+		NewMcpClientResource,
 		NewMcpPromptTemplateResource,
 		NewMcpResourceDefinitionResource,
 		NewMcpSettingsResource,

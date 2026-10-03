@@ -31,10 +31,6 @@ description: |-
 <a id="nestedatt--items"></a>
 ### Nested Schema for `items`
 
-Optional:
-
-- `spec` (Attributes) ProviderSpec defines the desired state of Provider (see [below for nested schema](#nestedatt--items--spec))
-
 Read-Only:
 
 - `alarms` (Attributes) (see [below for nested schema](#nestedatt--items--alarms))
@@ -42,53 +38,8 @@ Read-Only:
 - `deviations` (Attributes) (see [below for nested schema](#nestedatt--items--deviations))
 - `kind` (String)
 - `metadata` (Attributes) (see [below for nested schema](#nestedatt--items--metadata))
+- `spec` (Attributes) ProviderSpec defines the desired state of Provider (see [below for nested schema](#nestedatt--items--spec))
 - `status` (Attributes) ProviderStatus defines the observed state of Provider (see [below for nested schema](#nestedatt--items--status))
-
-<a id="nestedatt--items--spec"></a>
-### Nested Schema for `items.spec`
-
-Optional:
-
-- `endpoint` (Attributes) The provider endpoint (see [below for nested schema](#nestedatt--items--spec--endpoint))
-- `models` (Attributes List) The models supported by the provider (see [below for nested schema](#nestedatt--items--spec--models))
-- `title` (String) A human friendly title for the provider
-
-<a id="nestedatt--items--spec--endpoint"></a>
-### Nested Schema for `items.spec.endpoint`
-
-Optional:
-
-- `api_key` (String) The provider API key
-- `description` (String) The endpoint description
-- `headers` (Attributes List) Additional headers to be included in the request (see [below for nested schema](#nestedatt--items--spec--endpoint--headers))
-- `url` (String) The endpoint URL
-
-<a id="nestedatt--items--spec--endpoint--headers"></a>
-### Nested Schema for `items.spec.endpoint.headers`
-
-Optional:
-
-- `name` (String) Header name
-- `value` (String) Header value
-
-
-
-<a id="nestedatt--items--spec--models"></a>
-### Nested Schema for `items.spec.models`
-
-Optional:
-
-- `description` (String) Model description
-- `name` (String) Model name
-- `priority` (String) Priority sets the request scheduling priority.
-Valid for OpenAI models only. Maps to the service_tier API field (lowercased).
-- `reasoning_level` (List of String) Model reasoning level
-- `support_nested_responses` (Boolean) SupportNestedResponses controls whether the model's output supports nested responses
-- `temperature` (String) Temperature controls how random vs deterministic the model's output is
-- `type` (String) API type
-- `usage` (List of String) Model intended use
-
-
 
 <a id="nestedatt--items--alarms"></a>
 ### Nested Schema for `items.alarms`
@@ -118,6 +69,52 @@ Read-Only:
 - `labels` (Map of String)
 - `name` (String)
 - `namespace` (String)
+
+
+<a id="nestedatt--items--spec"></a>
+### Nested Schema for `items.spec`
+
+Read-Only:
+
+- `endpoint` (Attributes) The provider endpoint (see [below for nested schema](#nestedatt--items--spec--endpoint))
+- `models` (Attributes List) The models supported by the provider (see [below for nested schema](#nestedatt--items--spec--models))
+- `title` (String) A human friendly title for the provider
+
+<a id="nestedatt--items--spec--endpoint"></a>
+### Nested Schema for `items.spec.endpoint`
+
+Read-Only:
+
+- `api_key` (String, Sensitive) The provider API key
+- `description` (String) The endpoint description
+- `headers` (Attributes List) Additional headers to be included in the request (see [below for nested schema](#nestedatt--items--spec--endpoint--headers))
+- `url` (String) The endpoint URL
+
+<a id="nestedatt--items--spec--endpoint--headers"></a>
+### Nested Schema for `items.spec.endpoint.headers`
+
+Read-Only:
+
+- `name` (String) Header name
+- `value` (String) Header value
+
+
+
+<a id="nestedatt--items--spec--models"></a>
+### Nested Schema for `items.spec.models`
+
+Read-Only:
+
+- `description` (String) Model description
+- `name` (String) Model name
+- `priority` (String) Priority sets the request scheduling priority.
+Valid for OpenAI models only. Maps to the service_tier API field (lowercased).
+- `reasoning_level` (List of String) Model reasoning level
+- `support_nested_responses` (Boolean) SupportNestedResponses controls whether the model's output supports nested responses
+- `temperature` (String) Temperature controls how random vs deterministic the model's output is
+- `type` (String) API type
+- `usage` (List of String) Model intended use
+
 
 
 <a id="nestedatt--items--status"></a>

@@ -31,10 +31,6 @@ description: |-
 <a id="nestedatt--items"></a>
 ### Nested Schema for `items`
 
-Optional:
-
-- `spec` (Attributes) MCPResourceDefinitionSpec defines the desired state of MCPResourceDefinition (see [below for nested schema](#nestedatt--items--spec))
-
 Read-Only:
 
 - `alarms` (Attributes) (see [below for nested schema](#nestedatt--items--alarms))
@@ -42,83 +38,8 @@ Read-Only:
 - `deviations` (Attributes) (see [below for nested schema](#nestedatt--items--deviations))
 - `kind` (String)
 - `metadata` (Attributes) (see [below for nested schema](#nestedatt--items--metadata))
+- `spec` (Attributes) MCPResourceDefinitionSpec defines the desired state of MCPResourceDefinition (see [below for nested schema](#nestedatt--items--spec))
 - `status` (Attributes) MCPResourceDefinitionStatus defines the observed state of MCPResourceDefinition (see [below for nested schema](#nestedatt--items--status))
-
-<a id="nestedatt--items--spec"></a>
-### Nested Schema for `items.spec`
-
-Optional:
-
-- `arguments` (Attributes List) List of arguments for the resource.
-Present for resource templates if autocomplete is required. (see [below for nested schema](#nestedatt--items--spec--arguments))
-- `description` (String) A brief description of the resource
-- `mime_type` (String) The MIME type of the resource
-- `provider` (Attributes) The resource provider configuration (see [below for nested schema](#nestedatt--items--spec--provider))
-- `title` (String) A human friendly title for the resource
-- `uri_template` (String) A URI template for the resource
-
-<a id="nestedatt--items--spec--arguments"></a>
-### Nested Schema for `items.spec.arguments`
-
-Optional:
-
-- `autocomplete` (String) Autocomplete string for the argument
-Example: '{"group":"core.eda.nokia.com", "version":"v1", "resource":"namespaces"}'
-- `name` (String) Argument name to be used in the resource template
-
-
-<a id="nestedatt--items--spec--provider"></a>
-### Nested Schema for `items.spec.provider`
-
-Optional:
-
-- `http` (Attributes) HTTP provider configuration (see [below for nested schema](#nestedatt--items--spec--provider--http))
-- `query` (Attributes) Query provider configuration (see [below for nested schema](#nestedatt--items--spec--provider--query))
-- `static` (Attributes) Static string constituting the resource body (see [below for nested schema](#nestedatt--items--spec--provider--static))
-
-<a id="nestedatt--items--spec--provider--http"></a>
-### Nested Schema for `items.spec.provider.http`
-
-Optional:
-
-- `headers` (Attributes List) HTTP headers (see [below for nested schema](#nestedatt--items--spec--provider--http--headers))
-- `include_eda_auth` (Boolean) Indicates if the EDA authorization token should be passed along with this http request.
-Should be set to true for requests to EDA API server.
-- `method` (String) HTTP method
-- `timeout_seconds` (Number) HTTP request timeout in seconds
-Default 30 seconds
-- `trust_bundle` (String) TrustBundle for TLS authentication, a reference to a ConfigMap.
-If not specified, the system default trust bundle will be used.
-- `url` (String) HTTP endpoint URL.
-Includes scheme, host, port and path.
-
-<a id="nestedatt--items--spec--provider--http--headers"></a>
-### Nested Schema for `items.spec.provider.http.headers`
-
-Optional:
-
-- `name` (String) Header name
-- `value` (String) Header value
-
-
-
-<a id="nestedatt--items--spec--provider--query"></a>
-### Nested Schema for `items.spec.provider.query`
-
-Optional:
-
-- `expression` (String) EQL expression string
-
-
-<a id="nestedatt--items--spec--provider--static"></a>
-### Nested Schema for `items.spec.provider.static`
-
-Optional:
-
-- `content` (String) Static content
-
-
-
 
 <a id="nestedatt--items--alarms"></a>
 ### Nested Schema for `items.alarms`
@@ -148,6 +69,89 @@ Read-Only:
 - `labels` (Map of String)
 - `name` (String)
 - `namespace` (String)
+
+
+<a id="nestedatt--items--spec"></a>
+### Nested Schema for `items.spec`
+
+Read-Only:
+
+- `arguments` (Attributes List) List of arguments for the resource.
+Present for resource templates if autocomplete is required. (see [below for nested schema](#nestedatt--items--spec--arguments))
+- `description` (String) A brief description of the resource
+- `enabled` (Boolean) Whether the resource definition is enabled
+- `mime_type` (String) The MIME type of the resource
+- `provider` (Attributes) The resource provider configuration (see [below for nested schema](#nestedatt--items--spec--provider))
+- `title` (String) A human friendly title for the resource
+- `uri_template` (String) A URI template for the resource
+
+<a id="nestedatt--items--spec--arguments"></a>
+### Nested Schema for `items.spec.arguments`
+
+Read-Only:
+
+- `autocomplete` (String) Autocomplete string for the argument
+Examples:
+- '{"type":"gvr", "group":"core.eda.nokia.com", "version":"v1", "resource":"namespaces"}'
+- '{"type":"query", "table":".namespace.node.srl", "field": ".namespace.node.name", "where": "version = \"26.3.1\""}'
+- '{"type":"labelselector", "group":"core.eda.nokia.com", "kind":"TopoNode"}'
+- `choices` (List of String) Choices for the argument
+- `default` (String) Default value for the argument
+- `description` (String) A brief description of the argument
+- `name` (String) Argument name to be used in the resource template
+
+
+<a id="nestedatt--items--spec--provider"></a>
+### Nested Schema for `items.spec.provider`
+
+Read-Only:
+
+- `http` (Attributes) HTTP provider configuration (see [below for nested schema](#nestedatt--items--spec--provider--http))
+- `query` (Attributes) Query provider configuration (see [below for nested schema](#nestedatt--items--spec--provider--query))
+- `static` (Attributes) Static string constituting the resource body (see [below for nested schema](#nestedatt--items--spec--provider--static))
+
+<a id="nestedatt--items--spec--provider--http"></a>
+### Nested Schema for `items.spec.provider.http`
+
+Read-Only:
+
+- `headers` (Attributes List) HTTP headers (see [below for nested schema](#nestedatt--items--spec--provider--http--headers))
+- `include_eda_auth` (Boolean) Indicates if the EDA authorization token should be passed along with this http request.
+Should be set to true for requests to EDA API server.
+- `method` (String) HTTP method
+- `timeout_seconds` (Number) HTTP request timeout in seconds
+Default 30 seconds
+- `trust_bundle` (String) TrustBundle for TLS authentication, a reference to a ConfigMap.
+If not specified, the system default trust bundle will be used.
+- `url` (String) HTTP endpoint URL.
+Includes scheme, host, port and path.
+
+<a id="nestedatt--items--spec--provider--http--headers"></a>
+### Nested Schema for `items.spec.provider.http.headers`
+
+Read-Only:
+
+- `name` (String) Header name
+- `value` (String) Header value
+
+
+
+<a id="nestedatt--items--spec--provider--query"></a>
+### Nested Schema for `items.spec.provider.query`
+
+Read-Only:
+
+- `expression` (String) EQL expression string
+
+
+<a id="nestedatt--items--spec--provider--static"></a>
+### Nested Schema for `items.spec.provider.static`
+
+Read-Only:
+
+- `content` (String) Static content
+
+
 
 
 <a id="nestedatt--items--status"></a>

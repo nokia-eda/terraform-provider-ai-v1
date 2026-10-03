@@ -2,6 +2,17 @@ Path,Method,Schema,Model Name,Supported,Datasource,Resource
 /apps/ai.core.eda.nokia.com,GET,AppGroup,app_group,true,true,false
 /apps/ai.core.eda.nokia.com/v1,GET,ResourceList,resource_list,true,true,false
 /apps/ai.core.eda.nokia.com/v1/_ui/{pathname},GET,UIResult,,false,false,false
+/apps/ai.core.eda.nokia.com/v1/mcpclients,DELETE,com.nokia.eda.core.ai.v1.MCPClientList,,false,false,false
+/apps/ai.core.eda.nokia.com/v1/mcpclients,GET,com.nokia.eda.core.ai.v1.MCPClientList,mcp_client_list,true,true,false
+/apps/ai.core.eda.nokia.com/v1/mcpclients,POST,com.nokia.eda.core.ai.v1.MCPClient,mcp_client,true,false,true
+/apps/ai.core.eda.nokia.com/v1/mcpclients/_deleted,GET,com.nokia.eda.core.ai.v1.MCPClient_DeletedResources,,false,false,false
+/apps/ai.core.eda.nokia.com/v1/mcpclients/{name},DELETE,Status,mcp_client,true,false,true
+/apps/ai.core.eda.nokia.com/v1/mcpclients/{name},GET,com.nokia.eda.core.ai.v1.MCPClient,mcp_client,true,true,true
+/apps/ai.core.eda.nokia.com/v1/mcpclients/{name},PATCH,com.nokia.eda.core.ai.v1.MCPClient,,false,false,false
+/apps/ai.core.eda.nokia.com/v1/mcpclients/{name},PUT,com.nokia.eda.core.ai.v1.MCPClient,mcp_client,true,false,true
+/apps/ai.core.eda.nokia.com/v1/mcpclients/{name}/_revs,GET,ResourceHistory,,false,false,false
+/apps/ai.core.eda.nokia.com/v1/mcpclients/{name}/_targets,GET,IntentTargets,,false,false,false
+/apps/ai.core.eda.nokia.com/v1/mcpclients/{name}/_topology,POST,K8STopologyRequest,,false,false,false
 /apps/ai.core.eda.nokia.com/v1/mcpprompttemplates,DELETE,com.nokia.eda.core.ai.v1.MCPPromptTemplateList,,false,false,false
 /apps/ai.core.eda.nokia.com/v1/mcpprompttemplates,GET,com.nokia.eda.core.ai.v1.MCPPromptTemplateList,mcp_prompt_template_list,true,true,false
 /apps/ai.core.eda.nokia.com/v1/mcpprompttemplates,POST,com.nokia.eda.core.ai.v1.MCPPromptTemplate,mcp_prompt_template,true,false,true

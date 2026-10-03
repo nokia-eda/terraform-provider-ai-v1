@@ -104,17 +104,22 @@ func McpToolDefinitionListDataSourceSchema(ctx context.Context) schema.Schema {
 						"spec": schema.SingleNestedAttribute{
 							Attributes: map[string]schema.Attribute{
 								"description": schema.StringAttribute{
-									Optional:            true,
+									Computed:            true,
 									Description:         "A brief description of the resource",
 									MarkdownDescription: "A brief description of the resource",
 								},
+								"enabled": schema.BoolAttribute{
+									Computed:            true,
+									Description:         "Whether the tool definition is enabled",
+									MarkdownDescription: "Whether the tool definition is enabled",
+								},
 								"input_schema": schema.StringAttribute{
-									Optional:            true,
+									Computed:            true,
 									Description:         "Input schema for the tool (JSONSchema)",
 									MarkdownDescription: "Input schema for the tool (JSONSchema)",
 								},
 								"output_schema": schema.StringAttribute{
-									Optional:            true,
+									Computed:            true,
 									Description:         "Output schema for the tool (JSONSchema)",
 									MarkdownDescription: "Output schema for the tool (JSONSchema)",
 								},
@@ -126,12 +131,12 @@ func McpToolDefinitionListDataSourceSchema(ctx context.Context) schema.Schema {
 													NestedObject: schema.NestedAttributeObject{
 														Attributes: map[string]schema.Attribute{
 															"name": schema.StringAttribute{
-																Optional:            true,
+																Computed:            true,
 																Description:         "Header name",
 																MarkdownDescription: "Header name",
 															},
 															"value": schema.StringAttribute{
-																Optional:            true,
+																Computed:            true,
 																Description:         "Header value",
 																MarkdownDescription: "Header value",
 															},
@@ -142,34 +147,40 @@ func McpToolDefinitionListDataSourceSchema(ctx context.Context) schema.Schema {
 															},
 														},
 													},
-													Optional:            true,
+													Computed:            true,
 													Description:         "HTTP headers",
 													MarkdownDescription: "HTTP headers",
 												},
 												"include_eda_auth": schema.BoolAttribute{
-													Optional:            true,
+													Computed:            true,
 													Description:         "Indicates if the EDA authorization token should be passed along with this http request.\nShould be set to true for requests to EDA API server.",
 													MarkdownDescription: "Indicates if the EDA authorization token should be passed along with this http request.\nShould be set to true for requests to EDA API server.",
 												},
 												"method": schema.StringAttribute{
-													Optional:            true,
+													Computed:            true,
 													Description:         "HTTP method",
 													MarkdownDescription: "HTTP method",
 												},
 												"timeout_seconds": schema.Int64Attribute{
-													Optional:            true,
+													Computed:            true,
 													Description:         "HTTP request timeout in seconds\nDefault 30 seconds",
 													MarkdownDescription: "HTTP request timeout in seconds\nDefault 30 seconds",
 												},
 												"trust_bundle": schema.StringAttribute{
-													Optional:            true,
+													Computed:            true,
 													Description:         "TrustBundle for TLS authentication, a reference to a ConfigMap.\nIf not specified, the system default trust bundle will be used.",
 													MarkdownDescription: "TrustBundle for TLS authentication, a reference to a ConfigMap.\nIf not specified, the system default trust bundle will be used.",
 												},
 												"url": schema.StringAttribute{
-													Optional:            true,
+													Computed:            true,
 													Description:         "HTTP endpoint URL.\nIncludes scheme, host, port and path.",
 													MarkdownDescription: "HTTP endpoint URL.\nIncludes scheme, host, port and path.",
+												},
+												"url_params_retained_in_body": schema.ListAttribute{
+													ElementType:         types.StringType,
+													Computed:            true,
+													Description:         "URL template parameters that should also be retained in the request body.\nBy default, any parameter referenced by the URL template (e.g. /{{namespace}})\nis removed from the forwarded body. List parameter names here to keep them\nin the body as well. This is useful for APIs that expect the same value in both\nthe URL path and the body.",
+													MarkdownDescription: "URL template parameters that should also be retained in the request body.\nBy default, any parameter referenced by the URL template (e.g. /{{namespace}})\nis removed from the forwarded body. List parameter names here to keep them\nin the body as well. This is useful for APIs that expect the same value in both\nthe URL path and the body.",
 												},
 											},
 											CustomType: HttpType{
@@ -177,14 +188,14 @@ func McpToolDefinitionListDataSourceSchema(ctx context.Context) schema.Schema {
 													AttrTypes: HttpValue{}.AttributeTypes(ctx),
 												},
 											},
-											Optional:            true,
+											Computed:            true,
 											Description:         "HTTP provider configuration",
 											MarkdownDescription: "HTTP provider configuration",
 										},
 										"query": schema.SingleNestedAttribute{
 											Attributes: map[string]schema.Attribute{
 												"expression": schema.StringAttribute{
-													Optional:            true,
+													Computed:            true,
 													Description:         "EQL expression string",
 													MarkdownDescription: "EQL expression string",
 												},
@@ -194,12 +205,12 @@ func McpToolDefinitionListDataSourceSchema(ctx context.Context) schema.Schema {
 													AttrTypes: QueryValue{}.AttributeTypes(ctx),
 												},
 											},
-											Optional:            true,
+											Computed:            true,
 											Description:         "Query provider configuration",
 											MarkdownDescription: "Query provider configuration",
 										},
 										"workflow_ref": schema.StringAttribute{
-											Optional:            true,
+											Computed:            true,
 											Description:         "WorkflowDefinition name to use for the tool",
 											MarkdownDescription: "WorkflowDefinition name to use for the tool",
 										},
@@ -209,12 +220,12 @@ func McpToolDefinitionListDataSourceSchema(ctx context.Context) schema.Schema {
 											AttrTypes: ProviderValue{}.AttributeTypes(ctx),
 										},
 									},
-									Optional:            true,
+									Computed:            true,
 									Description:         "The resource provider configuration",
 									MarkdownDescription: "The resource provider configuration",
 								},
 								"title": schema.StringAttribute{
-									Optional:            true,
+									Computed:            true,
 									Description:         "A human friendly title for the tool",
 									MarkdownDescription: "A human friendly title for the tool",
 								},
@@ -224,7 +235,7 @@ func McpToolDefinitionListDataSourceSchema(ctx context.Context) schema.Schema {
 									AttrTypes: SpecValue{}.AttributeTypes(ctx),
 								},
 							},
-							Optional:            true,
+							Computed:            true,
 							Description:         "MCPToolDefinitionSpec defines the desired state of ToolDefinition",
 							MarkdownDescription: "MCPToolDefinitionSpec defines the desired state of ToolDefinition",
 						},
@@ -2473,6 +2484,24 @@ func (t SpecType) ValueFromObject(ctx context.Context, in basetypes.ObjectValue)
 			fmt.Sprintf(`description expected to be basetypes.StringValue, was: %T`, descriptionAttribute))
 	}
 
+	enabledAttribute, ok := attributes["enabled"]
+
+	if !ok {
+		diags.AddError(
+			"Attribute Missing",
+			`enabled is missing from object`)
+
+		return nil, diags
+	}
+
+	enabledVal, ok := enabledAttribute.(basetypes.BoolValue)
+
+	if !ok {
+		diags.AddError(
+			"Attribute Wrong Type",
+			fmt.Sprintf(`enabled expected to be basetypes.BoolValue, was: %T`, enabledAttribute))
+	}
+
 	inputSchemaAttribute, ok := attributes["input_schema"]
 
 	if !ok {
@@ -2551,6 +2580,7 @@ func (t SpecType) ValueFromObject(ctx context.Context, in basetypes.ObjectValue)
 
 	return SpecValue{
 		Description:  descriptionVal,
+		Enabled:      enabledVal,
 		InputSchema:  inputSchemaVal,
 		OutputSchema: outputSchemaVal,
 		Provider:     providerVal,
@@ -2640,6 +2670,24 @@ func NewSpecValue(attributeTypes map[string]attr.Type, attributes map[string]att
 			fmt.Sprintf(`description expected to be basetypes.StringValue, was: %T`, descriptionAttribute))
 	}
 
+	enabledAttribute, ok := attributes["enabled"]
+
+	if !ok {
+		diags.AddError(
+			"Attribute Missing",
+			`enabled is missing from object`)
+
+		return NewSpecValueUnknown(), diags
+	}
+
+	enabledVal, ok := enabledAttribute.(basetypes.BoolValue)
+
+	if !ok {
+		diags.AddError(
+			"Attribute Wrong Type",
+			fmt.Sprintf(`enabled expected to be basetypes.BoolValue, was: %T`, enabledAttribute))
+	}
+
 	inputSchemaAttribute, ok := attributes["input_schema"]
 
 	if !ok {
@@ -2718,6 +2766,7 @@ func NewSpecValue(attributeTypes map[string]attr.Type, attributes map[string]att
 
 	return SpecValue{
 		Description:  descriptionVal,
+		Enabled:      enabledVal,
 		InputSchema:  inputSchemaVal,
 		OutputSchema: outputSchemaVal,
 		Provider:     providerVal,
@@ -2795,6 +2844,7 @@ var _ basetypes.ObjectValuable = SpecValue{}
 
 type SpecValue struct {
 	Description  basetypes.StringValue `tfsdk:"description"`
+	Enabled      basetypes.BoolValue   `tfsdk:"enabled"`
 	InputSchema  basetypes.StringValue `tfsdk:"input_schema"`
 	OutputSchema basetypes.StringValue `tfsdk:"output_schema"`
 	Provider     basetypes.ObjectValue `tfsdk:"provider"`
@@ -2803,12 +2853,13 @@ type SpecValue struct {
 }
 
 func (v SpecValue) ToTerraformValue(ctx context.Context) (tftypes.Value, error) {
-	attrTypes := make(map[string]tftypes.Type, 5)
+	attrTypes := make(map[string]tftypes.Type, 6)
 
 	var val tftypes.Value
 	var err error
 
 	attrTypes["description"] = basetypes.StringType{}.TerraformType(ctx)
+	attrTypes["enabled"] = basetypes.BoolType{}.TerraformType(ctx)
 	attrTypes["input_schema"] = basetypes.StringType{}.TerraformType(ctx)
 	attrTypes["output_schema"] = basetypes.StringType{}.TerraformType(ctx)
 	attrTypes["provider"] = basetypes.ObjectType{
@@ -2820,7 +2871,7 @@ func (v SpecValue) ToTerraformValue(ctx context.Context) (tftypes.Value, error) 
 
 	switch v.state {
 	case attr.ValueStateKnown:
-		vals := make(map[string]tftypes.Value, 5)
+		vals := make(map[string]tftypes.Value, 6)
 
 		val, err = v.Description.ToTerraformValue(ctx)
 
@@ -2829,6 +2880,14 @@ func (v SpecValue) ToTerraformValue(ctx context.Context) (tftypes.Value, error) 
 		}
 
 		vals["description"] = val
+
+		val, err = v.Enabled.ToTerraformValue(ctx)
+
+		if err != nil {
+			return tftypes.NewValue(objectType, tftypes.UnknownValue), err
+		}
+
+		vals["enabled"] = val
 
 		val, err = v.InputSchema.ToTerraformValue(ctx)
 
@@ -2914,6 +2973,7 @@ func (v SpecValue) ToObjectValue(ctx context.Context) (basetypes.ObjectValue, di
 
 	attributeTypes := map[string]attr.Type{
 		"description":   basetypes.StringType{},
+		"enabled":       basetypes.BoolType{},
 		"input_schema":  basetypes.StringType{},
 		"output_schema": basetypes.StringType{},
 		"provider": basetypes.ObjectType{
@@ -2934,6 +2994,7 @@ func (v SpecValue) ToObjectValue(ctx context.Context) (basetypes.ObjectValue, di
 		attributeTypes,
 		map[string]attr.Value{
 			"description":   v.Description,
+			"enabled":       v.Enabled,
 			"input_schema":  v.InputSchema,
 			"output_schema": v.OutputSchema,
 			"provider":      provider,
@@ -2959,6 +3020,10 @@ func (v SpecValue) Equal(o attr.Value) bool {
 	}
 
 	if !v.Description.Equal(other.Description) {
+		return false
+	}
+
+	if !v.Enabled.Equal(other.Enabled) {
 		return false
 	}
 
@@ -2992,6 +3057,7 @@ func (v SpecValue) Type(ctx context.Context) attr.Type {
 func (v SpecValue) AttributeTypes(ctx context.Context) map[string]attr.Type {
 	return map[string]attr.Type{
 		"description":   basetypes.StringType{},
+		"enabled":       basetypes.BoolType{},
 		"input_schema":  basetypes.StringType{},
 		"output_schema": basetypes.StringType{},
 		"provider": basetypes.ObjectType{
@@ -3622,18 +3688,37 @@ func (t HttpType) ValueFromObject(ctx context.Context, in basetypes.ObjectValue)
 			fmt.Sprintf(`url expected to be basetypes.StringValue, was: %T`, urlAttribute))
 	}
 
+	urlParamsRetainedInBodyAttribute, ok := attributes["url_params_retained_in_body"]
+
+	if !ok {
+		diags.AddError(
+			"Attribute Missing",
+			`url_params_retained_in_body is missing from object`)
+
+		return nil, diags
+	}
+
+	urlParamsRetainedInBodyVal, ok := urlParamsRetainedInBodyAttribute.(basetypes.ListValue)
+
+	if !ok {
+		diags.AddError(
+			"Attribute Wrong Type",
+			fmt.Sprintf(`url_params_retained_in_body expected to be basetypes.ListValue, was: %T`, urlParamsRetainedInBodyAttribute))
+	}
+
 	if diags.HasError() {
 		return nil, diags
 	}
 
 	return HttpValue{
-		Headers:        headersVal,
-		IncludeEdaAuth: includeEdaAuthVal,
-		Method:         methodVal,
-		TimeoutSeconds: timeoutSecondsVal,
-		TrustBundle:    trustBundleVal,
-		Url:            urlVal,
-		state:          attr.ValueStateKnown,
+		Headers:                 headersVal,
+		IncludeEdaAuth:          includeEdaAuthVal,
+		Method:                  methodVal,
+		TimeoutSeconds:          timeoutSecondsVal,
+		TrustBundle:             trustBundleVal,
+		Url:                     urlVal,
+		UrlParamsRetainedInBody: urlParamsRetainedInBodyVal,
+		state:                   attr.ValueStateKnown,
 	}, diags
 }
 
@@ -3808,18 +3893,37 @@ func NewHttpValue(attributeTypes map[string]attr.Type, attributes map[string]att
 			fmt.Sprintf(`url expected to be basetypes.StringValue, was: %T`, urlAttribute))
 	}
 
+	urlParamsRetainedInBodyAttribute, ok := attributes["url_params_retained_in_body"]
+
+	if !ok {
+		diags.AddError(
+			"Attribute Missing",
+			`url_params_retained_in_body is missing from object`)
+
+		return NewHttpValueUnknown(), diags
+	}
+
+	urlParamsRetainedInBodyVal, ok := urlParamsRetainedInBodyAttribute.(basetypes.ListValue)
+
+	if !ok {
+		diags.AddError(
+			"Attribute Wrong Type",
+			fmt.Sprintf(`url_params_retained_in_body expected to be basetypes.ListValue, was: %T`, urlParamsRetainedInBodyAttribute))
+	}
+
 	if diags.HasError() {
 		return NewHttpValueUnknown(), diags
 	}
 
 	return HttpValue{
-		Headers:        headersVal,
-		IncludeEdaAuth: includeEdaAuthVal,
-		Method:         methodVal,
-		TimeoutSeconds: timeoutSecondsVal,
-		TrustBundle:    trustBundleVal,
-		Url:            urlVal,
-		state:          attr.ValueStateKnown,
+		Headers:                 headersVal,
+		IncludeEdaAuth:          includeEdaAuthVal,
+		Method:                  methodVal,
+		TimeoutSeconds:          timeoutSecondsVal,
+		TrustBundle:             trustBundleVal,
+		Url:                     urlVal,
+		UrlParamsRetainedInBody: urlParamsRetainedInBodyVal,
+		state:                   attr.ValueStateKnown,
 	}, diags
 }
 
@@ -3891,17 +3995,18 @@ func (t HttpType) ValueType(ctx context.Context) attr.Value {
 var _ basetypes.ObjectValuable = HttpValue{}
 
 type HttpValue struct {
-	Headers        basetypes.ListValue   `tfsdk:"headers"`
-	IncludeEdaAuth basetypes.BoolValue   `tfsdk:"include_eda_auth"`
-	Method         basetypes.StringValue `tfsdk:"method"`
-	TimeoutSeconds basetypes.Int64Value  `tfsdk:"timeout_seconds"`
-	TrustBundle    basetypes.StringValue `tfsdk:"trust_bundle"`
-	Url            basetypes.StringValue `tfsdk:"url"`
-	state          attr.ValueState
+	Headers                 basetypes.ListValue   `tfsdk:"headers"`
+	IncludeEdaAuth          basetypes.BoolValue   `tfsdk:"include_eda_auth"`
+	Method                  basetypes.StringValue `tfsdk:"method"`
+	TimeoutSeconds          basetypes.Int64Value  `tfsdk:"timeout_seconds"`
+	TrustBundle             basetypes.StringValue `tfsdk:"trust_bundle"`
+	Url                     basetypes.StringValue `tfsdk:"url"`
+	UrlParamsRetainedInBody basetypes.ListValue   `tfsdk:"url_params_retained_in_body"`
+	state                   attr.ValueState
 }
 
 func (v HttpValue) ToTerraformValue(ctx context.Context) (tftypes.Value, error) {
-	attrTypes := make(map[string]tftypes.Type, 6)
+	attrTypes := make(map[string]tftypes.Type, 7)
 
 	var val tftypes.Value
 	var err error
@@ -3914,12 +4019,15 @@ func (v HttpValue) ToTerraformValue(ctx context.Context) (tftypes.Value, error) 
 	attrTypes["timeout_seconds"] = basetypes.Int64Type{}.TerraformType(ctx)
 	attrTypes["trust_bundle"] = basetypes.StringType{}.TerraformType(ctx)
 	attrTypes["url"] = basetypes.StringType{}.TerraformType(ctx)
+	attrTypes["url_params_retained_in_body"] = basetypes.ListType{
+		ElemType: types.StringType,
+	}.TerraformType(ctx)
 
 	objectType := tftypes.Object{AttributeTypes: attrTypes}
 
 	switch v.state {
 	case attr.ValueStateKnown:
-		vals := make(map[string]tftypes.Value, 6)
+		vals := make(map[string]tftypes.Value, 7)
 
 		val, err = v.Headers.ToTerraformValue(ctx)
 
@@ -3968,6 +4076,14 @@ func (v HttpValue) ToTerraformValue(ctx context.Context) (tftypes.Value, error) 
 		}
 
 		vals["url"] = val
+
+		val, err = v.UrlParamsRetainedInBody.ToTerraformValue(ctx)
+
+		if err != nil {
+			return tftypes.NewValue(objectType, tftypes.UnknownValue), err
+		}
+
+		vals["url_params_retained_in_body"] = val
 
 		if err := tftypes.ValidateValue(objectType, vals); err != nil {
 			return tftypes.NewValue(objectType, tftypes.UnknownValue), err
@@ -4027,6 +4143,34 @@ func (v HttpValue) ToObjectValue(ctx context.Context) (basetypes.ObjectValue, di
 		)
 	}
 
+	var urlParamsRetainedInBodyVal basetypes.ListValue
+	switch {
+	case v.UrlParamsRetainedInBody.IsUnknown():
+		urlParamsRetainedInBodyVal = types.ListUnknown(types.StringType)
+	case v.UrlParamsRetainedInBody.IsNull():
+		urlParamsRetainedInBodyVal = types.ListNull(types.StringType)
+	default:
+		var d diag.Diagnostics
+		urlParamsRetainedInBodyVal, d = types.ListValue(types.StringType, v.UrlParamsRetainedInBody.Elements())
+		diags.Append(d...)
+	}
+
+	if diags.HasError() {
+		return types.ObjectUnknown(map[string]attr.Type{
+			"headers": basetypes.ListType{
+				ElemType: HeadersValue{}.Type(ctx),
+			},
+			"include_eda_auth": basetypes.BoolType{},
+			"method":           basetypes.StringType{},
+			"timeout_seconds":  basetypes.Int64Type{},
+			"trust_bundle":     basetypes.StringType{},
+			"url":              basetypes.StringType{},
+			"url_params_retained_in_body": basetypes.ListType{
+				ElemType: types.StringType,
+			},
+		}), diags
+	}
+
 	attributeTypes := map[string]attr.Type{
 		"headers": basetypes.ListType{
 			ElemType: HeadersValue{}.Type(ctx),
@@ -4036,6 +4180,9 @@ func (v HttpValue) ToObjectValue(ctx context.Context) (basetypes.ObjectValue, di
 		"timeout_seconds":  basetypes.Int64Type{},
 		"trust_bundle":     basetypes.StringType{},
 		"url":              basetypes.StringType{},
+		"url_params_retained_in_body": basetypes.ListType{
+			ElemType: types.StringType,
+		},
 	}
 
 	if v.IsNull() {
@@ -4049,12 +4196,13 @@ func (v HttpValue) ToObjectValue(ctx context.Context) (basetypes.ObjectValue, di
 	objVal, diags := types.ObjectValue(
 		attributeTypes,
 		map[string]attr.Value{
-			"headers":          headers,
-			"include_eda_auth": v.IncludeEdaAuth,
-			"method":           v.Method,
-			"timeout_seconds":  v.TimeoutSeconds,
-			"trust_bundle":     v.TrustBundle,
-			"url":              v.Url,
+			"headers":                     headers,
+			"include_eda_auth":            v.IncludeEdaAuth,
+			"method":                      v.Method,
+			"timeout_seconds":             v.TimeoutSeconds,
+			"trust_bundle":                v.TrustBundle,
+			"url":                         v.Url,
+			"url_params_retained_in_body": urlParamsRetainedInBodyVal,
 		})
 
 	return objVal, diags
@@ -4099,6 +4247,10 @@ func (v HttpValue) Equal(o attr.Value) bool {
 		return false
 	}
 
+	if !v.UrlParamsRetainedInBody.Equal(other.UrlParamsRetainedInBody) {
+		return false
+	}
+
 	return true
 }
 
@@ -4120,6 +4272,9 @@ func (v HttpValue) AttributeTypes(ctx context.Context) map[string]attr.Type {
 		"timeout_seconds":  basetypes.Int64Type{},
 		"trust_bundle":     basetypes.StringType{},
 		"url":              basetypes.StringType{},
+		"url_params_retained_in_body": basetypes.ListType{
+			ElemType: types.StringType,
+		},
 	}
 }
 

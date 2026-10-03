@@ -106,12 +106,13 @@ func ProviderListDataSourceSchema(ctx context.Context) schema.Schema {
 								"endpoint": schema.SingleNestedAttribute{
 									Attributes: map[string]schema.Attribute{
 										"api_key": schema.StringAttribute{
-											Optional:            true,
+											Computed:            true,
+											Sensitive:           true,
 											Description:         "The provider API key",
 											MarkdownDescription: "The provider API key",
 										},
 										"description": schema.StringAttribute{
-											Optional:            true,
+											Computed:            true,
 											Description:         "The endpoint description",
 											MarkdownDescription: "The endpoint description",
 										},
@@ -119,12 +120,12 @@ func ProviderListDataSourceSchema(ctx context.Context) schema.Schema {
 											NestedObject: schema.NestedAttributeObject{
 												Attributes: map[string]schema.Attribute{
 													"name": schema.StringAttribute{
-														Optional:            true,
+														Computed:            true,
 														Description:         "Header name",
 														MarkdownDescription: "Header name",
 													},
 													"value": schema.StringAttribute{
-														Optional:            true,
+														Computed:            true,
 														Description:         "Header value",
 														MarkdownDescription: "Header value",
 													},
@@ -135,12 +136,12 @@ func ProviderListDataSourceSchema(ctx context.Context) schema.Schema {
 													},
 												},
 											},
-											Optional:            true,
+											Computed:            true,
 											Description:         "Additional headers to be included in the request",
 											MarkdownDescription: "Additional headers to be included in the request",
 										},
 										"url": schema.StringAttribute{
-											Optional:            true,
+											Computed:            true,
 											Description:         "The endpoint URL",
 											MarkdownDescription: "The endpoint URL",
 										},
@@ -150,7 +151,7 @@ func ProviderListDataSourceSchema(ctx context.Context) schema.Schema {
 											AttrTypes: EndpointValue{}.AttributeTypes(ctx),
 										},
 									},
-									Optional:            true,
+									Computed:            true,
 									Description:         "The provider endpoint",
 									MarkdownDescription: "The provider endpoint",
 								},
@@ -158,44 +159,44 @@ func ProviderListDataSourceSchema(ctx context.Context) schema.Schema {
 									NestedObject: schema.NestedAttributeObject{
 										Attributes: map[string]schema.Attribute{
 											"description": schema.StringAttribute{
-												Optional:            true,
+												Computed:            true,
 												Description:         "Model description",
 												MarkdownDescription: "Model description",
 											},
 											"name": schema.StringAttribute{
-												Optional:            true,
+												Computed:            true,
 												Description:         "Model name",
 												MarkdownDescription: "Model name",
 											},
 											"priority": schema.StringAttribute{
-												Optional:            true,
+												Computed:            true,
 												Description:         "Priority sets the request scheduling priority.\nValid for OpenAI models only. Maps to the service_tier API field (lowercased).",
 												MarkdownDescription: "Priority sets the request scheduling priority.\nValid for OpenAI models only. Maps to the service_tier API field (lowercased).",
 											},
 											"reasoning_level": schema.ListAttribute{
 												ElementType:         types.StringType,
-												Optional:            true,
+												Computed:            true,
 												Description:         "Model reasoning level",
 												MarkdownDescription: "Model reasoning level",
 											},
 											"support_nested_responses": schema.BoolAttribute{
-												Optional:            true,
+												Computed:            true,
 												Description:         "SupportNestedResponses controls whether the model's output supports nested responses",
 												MarkdownDescription: "SupportNestedResponses controls whether the model's output supports nested responses",
 											},
 											"temperature": schema.StringAttribute{
-												Optional:            true,
+												Computed:            true,
 												Description:         "Temperature controls how random vs deterministic the model's output is",
 												MarkdownDescription: "Temperature controls how random vs deterministic the model's output is",
 											},
 											"type": schema.StringAttribute{
-												Optional:            true,
+												Computed:            true,
 												Description:         "API type",
 												MarkdownDescription: "API type",
 											},
 											"usage": schema.ListAttribute{
 												ElementType:         types.StringType,
-												Optional:            true,
+												Computed:            true,
 												Description:         "Model intended use",
 												MarkdownDescription: "Model intended use",
 											},
@@ -206,12 +207,12 @@ func ProviderListDataSourceSchema(ctx context.Context) schema.Schema {
 											},
 										},
 									},
-									Optional:            true,
+									Computed:            true,
 									Description:         "The models supported by the provider",
 									MarkdownDescription: "The models supported by the provider",
 								},
 								"title": schema.StringAttribute{
-									Optional:            true,
+									Computed:            true,
 									Description:         "A human friendly title for the provider",
 									MarkdownDescription: "A human friendly title for the provider",
 								},
@@ -221,7 +222,7 @@ func ProviderListDataSourceSchema(ctx context.Context) schema.Schema {
 									AttrTypes: SpecValue{}.AttributeTypes(ctx),
 								},
 							},
-							Optional:            true,
+							Computed:            true,
 							Description:         "ProviderSpec defines the desired state of Provider",
 							MarkdownDescription: "ProviderSpec defines the desired state of Provider",
 						},

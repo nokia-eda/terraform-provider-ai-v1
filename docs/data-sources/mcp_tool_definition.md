@@ -22,7 +22,6 @@ description: |-
 ### Optional
 
 - `hash` (String) resource content will be returned as it was at the time of this git hash
-- `spec` (Attributes) MCPToolDefinitionSpec defines the desired state of ToolDefinition (see [below for nested schema](#nestedatt--spec))
 
 ### Read-Only
 
@@ -31,63 +30,8 @@ description: |-
 - `deviations` (Attributes) (see [below for nested schema](#nestedatt--deviations))
 - `kind` (String)
 - `metadata` (Attributes) (see [below for nested schema](#nestedatt--metadata))
+- `spec` (Attributes) MCPToolDefinitionSpec defines the desired state of ToolDefinition (see [below for nested schema](#nestedatt--spec))
 - `status` (Attributes) MCPToolDefinitionStatus defines the observed state of ToolDefinition (see [below for nested schema](#nestedatt--status))
-
-<a id="nestedatt--spec"></a>
-### Nested Schema for `spec`
-
-Optional:
-
-- `description` (String) A brief description of the resource
-- `input_schema` (String) Input schema for the tool (JSONSchema)
-- `output_schema` (String) Output schema for the tool (JSONSchema)
-- `provider` (Attributes) The resource provider configuration (see [below for nested schema](#nestedatt--spec--provider))
-- `title` (String) A human friendly title for the tool
-
-<a id="nestedatt--spec--provider"></a>
-### Nested Schema for `spec.provider`
-
-Optional:
-
-- `http` (Attributes) HTTP provider configuration (see [below for nested schema](#nestedatt--spec--provider--http))
-- `query` (Attributes) Query provider configuration (see [below for nested schema](#nestedatt--spec--provider--query))
-- `workflow_ref` (String) WorkflowDefinition name to use for the tool
-
-<a id="nestedatt--spec--provider--http"></a>
-### Nested Schema for `spec.provider.http`
-
-Optional:
-
-- `headers` (Attributes List) HTTP headers (see [below for nested schema](#nestedatt--spec--provider--http--headers))
-- `include_eda_auth` (Boolean) Indicates if the EDA authorization token should be passed along with this http request.
-Should be set to true for requests to EDA API server.
-- `method` (String) HTTP method
-- `timeout_seconds` (Number) HTTP request timeout in seconds
-Default 30 seconds
-- `trust_bundle` (String) TrustBundle for TLS authentication, a reference to a ConfigMap.
-If not specified, the system default trust bundle will be used.
-- `url` (String) HTTP endpoint URL.
-Includes scheme, host, port and path.
-
-<a id="nestedatt--spec--provider--http--headers"></a>
-### Nested Schema for `spec.provider.http.headers`
-
-Optional:
-
-- `name` (String) Header name
-- `value` (String) Header value
-
-
-
-<a id="nestedatt--spec--provider--query"></a>
-### Nested Schema for `spec.provider.query`
-
-Optional:
-
-- `expression` (String) EQL expression string
-
-
-
 
 <a id="nestedatt--alarms"></a>
 ### Nested Schema for `alarms`
@@ -117,6 +61,68 @@ Read-Only:
 - `labels` (Map of String)
 - `name` (String)
 - `namespace` (String)
+
+
+<a id="nestedatt--spec"></a>
+### Nested Schema for `spec`
+
+Read-Only:
+
+- `description` (String) A brief description of the resource
+- `enabled` (Boolean) Whether the tool definition is enabled
+- `input_schema` (String) Input schema for the tool (JSONSchema)
+- `output_schema` (String) Output schema for the tool (JSONSchema)
+- `provider` (Attributes) The resource provider configuration (see [below for nested schema](#nestedatt--spec--provider))
+- `title` (String) A human friendly title for the tool
+
+<a id="nestedatt--spec--provider"></a>
+### Nested Schema for `spec.provider`
+
+Read-Only:
+
+- `http` (Attributes) HTTP provider configuration (see [below for nested schema](#nestedatt--spec--provider--http))
+- `query` (Attributes) Query provider configuration (see [below for nested schema](#nestedatt--spec--provider--query))
+- `workflow_ref` (String) WorkflowDefinition name to use for the tool
+
+<a id="nestedatt--spec--provider--http"></a>
+### Nested Schema for `spec.provider.http`
+
+Read-Only:
+
+- `headers` (Attributes List) HTTP headers (see [below for nested schema](#nestedatt--spec--provider--http--headers))
+- `include_eda_auth` (Boolean) Indicates if the EDA authorization token should be passed along with this http request.
+Should be set to true for requests to EDA API server.
+- `method` (String) HTTP method
+- `timeout_seconds` (Number) HTTP request timeout in seconds
+Default 30 seconds
+- `trust_bundle` (String) TrustBundle for TLS authentication, a reference to a ConfigMap.
+If not specified, the system default trust bundle will be used.
+- `url` (String) HTTP endpoint URL.
+Includes scheme, host, port and path.
+- `url_params_retained_in_body` (List of String) URL template parameters that should also be retained in the request body.
+By default, any parameter referenced by the URL template (e.g. /{{namespace}})
+is removed from the forwarded body. List parameter names here to keep them
+in the body as well. This is useful for APIs that expect the same value in both
+the URL path and the body.
+
+<a id="nestedatt--spec--provider--http--headers"></a>
+### Nested Schema for `spec.provider.http.headers`
+
+Read-Only:
+
+- `name` (String) Header name
+- `value` (String) Header value
+
+
+
+<a id="nestedatt--spec--provider--query"></a>
+### Nested Schema for `spec.provider.query`
+
+Read-Only:
+
+- `expression` (String) EQL expression string
+
+
 
 
 <a id="nestedatt--status"></a>

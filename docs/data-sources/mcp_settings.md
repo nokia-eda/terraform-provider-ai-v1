@@ -22,7 +22,6 @@ description: |-
 ### Optional
 
 - `hash` (String) resource content will be returned as it was at the time of this git hash
-- `spec` (Attributes) MCPSettingsSpec defines the desired state of MCPSettings (see [below for nested schema](#nestedatt--spec))
 
 ### Read-Only
 
@@ -31,29 +30,8 @@ description: |-
 - `deviations` (Attributes) (see [below for nested schema](#nestedatt--deviations))
 - `kind` (String)
 - `metadata` (Attributes) (see [below for nested schema](#nestedatt--metadata))
+- `spec` (Attributes) MCPSettingsSpec defines the desired state of MCPSettings (see [below for nested schema](#nestedatt--spec))
 - `status` (Attributes) MCPSettingsStatus defines the observed state of MCPSettings (see [below for nested schema](#nestedatt--status))
-
-<a id="nestedatt--spec"></a>
-### Nested Schema for `spec`
-
-Optional:
-
-- `capabilities` (Attributes) MCP capabilities (see [below for nested schema](#nestedatt--spec--capabilities))
-- `enabled` (Boolean) Enable EDA MCP Server
-
-<a id="nestedatt--spec--capabilities"></a>
-### Nested Schema for `spec.capabilities`
-
-Optional:
-
-- `enable_completions` (Boolean) Enable completions
-- `enable_logging` (Boolean) Enable logging
-- `prompt_list_changed_notifications` (Boolean) Prompt list changed notifications Support
-- `resource_list_changed_notifications` (Boolean) Resource list changed notifications Support
-- `resource_subscribe_support` (Boolean) Resource subscribe support
-- `tool_list_changed_notifications` (Boolean) Tool list changed notifications Support
-
-
 
 <a id="nestedatt--alarms"></a>
 ### Nested Schema for `alarms`
@@ -83,6 +61,29 @@ Read-Only:
 - `labels` (Map of String)
 - `name` (String)
 - `namespace` (String)
+
+
+<a id="nestedatt--spec"></a>
+### Nested Schema for `spec`
+
+Read-Only:
+
+- `capabilities` (Attributes) MCP capabilities (see [below for nested schema](#nestedatt--spec--capabilities))
+- `enabled` (Boolean) Enable EDA MCP Server
+- `instructions` (String) MCP Server Instructions
+
+<a id="nestedatt--spec--capabilities"></a>
+### Nested Schema for `spec.capabilities`
+
+Read-Only:
+
+- `enable_completions` (Boolean) Enable completions
+- `enable_logging` (Boolean) Enable logging
+- `prompt_list_changed_notifications` (Boolean) Prompt list changed notifications Support
+- `resource_list_changed_notifications` (Boolean) Resource list changed notifications Support
+- `resource_subscribe_support` (Boolean) Resource subscribe support
+- `tool_list_changed_notifications` (Boolean) Tool list changed notifications Support
+
 
 
 <a id="nestedatt--status"></a>

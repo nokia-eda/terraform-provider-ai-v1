@@ -84,9 +84,7 @@
             "type": "string"
           },
           "values": {
-            "additionalProperties": {
-              "type": "object"
-            },
+            "additionalProperties": true,
             "description": "Associated data/information.\nThe error \"message\" may contain {{name}} escapes that should be substituted with information from this dictionary.\n\nNote that this map MUST NOT contain JSON objects (`{...}`) or arrays (`[...]`), only simple JSON types are permitted.",
             "type": "object"
           }
@@ -149,6 +147,10 @@
           "x-permissive": {
             "description": "For an \"add\" operation, an already-present field referenced by the \"path\" will\nresult in an error unless this field is true.  Similarly for a non-existent\ntarget field of a \"remove\" operation.",
             "type": "boolean"
+          },
+          "x-ui-annotation": {
+            "description": "Metadata maintained in support of the EDA UI.  External use not recommended.",
+            "type": "string"
           }
         },
         "required": [
@@ -581,10 +583,16 @@
           "endpoint_a_name": {
             "type": "string"
           },
+          "endpoint_a_namespace": {
+            "type": "string"
+          },
           "endpoint_b": {
             "$ref": "#/components/schemas/TopoOverlayEndpoint"
           },
           "endpoint_b_name": {
+            "type": "string"
+          },
+          "endpoint_b_namespace": {
             "type": "string"
           },
           "group_key": {
@@ -897,6 +905,1168 @@
       "UIResult": {
         "type": "string"
       },
+      "com.nokia.eda.core.ai.v1.MCPClient": {
+        "description": "MCPClient is the Schema for the mcpclients API",
+        "properties": {
+          "alarms": {
+            "$ref": "#/components/schemas/com.nokia.eda.core.ai.v1.MCPClient_alarms"
+          },
+          "apiVersion": {
+            "default": "ai.core.eda.nokia.com/v1",
+            "pattern": "^ai\\.core\\.eda\\.nokia\\.com/v1$",
+            "type": "string",
+            "x-eda-nokia-com": {
+              "ui-pattern-error": "The apiVersion must be set to ai.core.eda.nokia.com/v1",
+              "ui-visible-if": "false"
+            }
+          },
+          "deviations": {
+            "$ref": "#/components/schemas/com.nokia.eda.core.ai.v1.MCPClient_deviations"
+          },
+          "kind": {
+            "default": "MCPClient",
+            "pattern": "^MCPClient$",
+            "type": "string",
+            "x-eda-nokia-com": {
+              "ui-pattern-error": "The kind must be set to MCPClient",
+              "ui-visible-if": "false"
+            }
+          },
+          "metadata": {
+            "$ref": "#/components/schemas/com.nokia.eda.core.ai.v1.MCPClient_metadata"
+          },
+          "spec": {
+            "description": "MCPClientSpec defines the desired state of MCPClient.\n\nAn MCPClient describes how EDA connects to a remote MCP server\nover Streamable HTTP, how it authenticates, and which primitives\n(tools, resources, prompts) it imports from that server.",
+            "properties": {
+              "auth": {
+                "description": "Authentication configuration for the remote MCP server.\nExactly one of bearer or clientCredentials must be specified.\nOnly auth modes that can complete without human interaction are\nsupported, since MCPClient is applied declaratively via the API.",
+                "properties": {
+                  "bearer": {
+                    "description": "Static bearer token / API key authentication.\nThe token is sent as `Authorization: Bearer \u003ctoken\u003e` on every\nrequest to the remote MCP server.",
+                    "properties": {
+                      "key": {
+                        "description": "Key within the Secret's data map.",
+                        "title": "Key",
+                        "type": "string",
+                        "x-eda-nokia-com": {
+                          "i18n-keys": {
+                            "description": "crd.MCPClient.spec.auth.clientCredentials.clientSecretRef.key._description",
+                            "title": "crd.MCPClient.spec.auth.clientCredentials.clientSecretRef.key._title"
+                          },
+                          "ui-order-priority": 20
+                        }
+                      },
+                      "name": {
+                        "description": "Name of the Secret.",
+                        "title": "Secret",
+                        "type": "string",
+                        "x-eda-nokia-com": {
+                          "i18n-keys": {
+                            "description": "crd.MCPClient.spec.auth.clientCredentials.clientSecretRef.name._description",
+                            "title": "crd.MCPClient.spec.auth.clientCredentials.clientSecretRef.name._title"
+                          },
+                          "ui-order-priority": 10
+                        }
+                      }
+                    },
+                    "required": [
+                      "key",
+                      "name"
+                    ],
+                    "title": "Bearer",
+                    "type": "object",
+                    "x-eda-nokia-com": {
+                      "i18n-keys": {
+                        "description": "crd.MCPClient.spec.auth.bearer._description",
+                        "title": "crd.MCPClient.spec.auth.bearer._title"
+                      },
+                      "ui-order-priority": 410
+                    }
+                  },
+                  "clientCredentials": {
+                    "description": "OAuth 2.1 client_credentials flow (machine-to-machine).\nEDA exchanges its client credentials for an access token at\nthe configured token endpoint and refreshes the token as\nneeded.",
+                    "properties": {
+                      "audience": {
+                        "description": "Optional audience (`aud`) claim to request on the token.",
+                        "title": "Audience",
+                        "type": "string",
+                        "x-eda-nokia-com": {
+                          "i18n-keys": {
+                            "description": "crd.MCPClient.spec.auth.clientCredentials.audience._description",
+                            "title": "crd.MCPClient.spec.auth.clientCredentials.audience._title"
+                          },
+                          "ui-order-priority": 425
+                        }
+                      },
+                      "clientAuthMethod": {
+                        "default": "ClientSecretBasic",
+                        "description": "How the client credentials are sent to the token endpoint.",
+                        "enum": [
+                          "ClientSecretBasic",
+                          "ClientSecretPost"
+                        ],
+                        "title": "Client Authentication",
+                        "type": "string",
+                        "x-eda-nokia-com": {
+                          "i18n-keys": {
+                            "description": "crd.MCPClient.spec.auth.clientCredentials.clientAuthMethod._description",
+                            "enum": [
+                              "crd.MCPClient.spec.auth.clientCredentials.clientAuthMethod._enum.ClientSecretBasic",
+                              "crd.MCPClient.spec.auth.clientCredentials.clientAuthMethod._enum.ClientSecretPost"
+                            ],
+                            "title": "crd.MCPClient.spec.auth.clientCredentials.clientAuthMethod._title"
+                          },
+                          "ui-order-priority": 426
+                        }
+                      },
+                      "clientID": {
+                        "description": "OAuth client identifier issued to EDA by the authorization server.",
+                        "title": "Client ID",
+                        "type": "string",
+                        "x-eda-nokia-com": {
+                          "i18n-keys": {
+                            "description": "crd.MCPClient.spec.auth.clientCredentials.clientID._description",
+                            "title": "crd.MCPClient.spec.auth.clientCredentials.clientID._title"
+                          },
+                          "ui-order-priority": 422
+                        }
+                      },
+                      "clientSecretRef": {
+                        "description": "Reference to a Secret containing the OAuth client secret.",
+                        "properties": {
+                          "key": {
+                            "description": "Key within the Secret's data map.",
+                            "title": "Key",
+                            "type": "string",
+                            "x-eda-nokia-com": {
+                              "i18n-keys": {
+                                "description": "crd.MCPClient.spec.auth.clientCredentials.clientSecretRef.key._description",
+                                "title": "crd.MCPClient.spec.auth.clientCredentials.clientSecretRef.key._title"
+                              },
+                              "ui-order-priority": 20
+                            }
+                          },
+                          "name": {
+                            "description": "Name of the Secret.",
+                            "title": "Secret",
+                            "type": "string",
+                            "x-eda-nokia-com": {
+                              "i18n-keys": {
+                                "description": "crd.MCPClient.spec.auth.clientCredentials.clientSecretRef.name._description",
+                                "title": "crd.MCPClient.spec.auth.clientCredentials.clientSecretRef.name._title"
+                              },
+                              "ui-order-priority": 10
+                            }
+                          }
+                        },
+                        "required": [
+                          "key",
+                          "name"
+                        ],
+                        "title": "Client Secret",
+                        "type": "object",
+                        "x-eda-nokia-com": {
+                          "i18n-keys": {
+                            "description": "crd.MCPClient.spec.auth.clientCredentials.clientSecretRef._description",
+                            "title": "crd.MCPClient.spec.auth.clientCredentials.clientSecretRef._title"
+                          },
+                          "ui-order-priority": 423
+                        }
+                      },
+                      "scopes": {
+                        "description": "OAuth scopes to request when obtaining an access token.",
+                        "items": {
+                          "type": "string"
+                        },
+                        "title": "Scopes",
+                        "type": "array",
+                        "x-eda-nokia-com": {
+                          "i18n-keys": {
+                            "description": "crd.MCPClient.spec.auth.clientCredentials.scopes._description",
+                            "title": "crd.MCPClient.spec.auth.clientCredentials.scopes._title"
+                          },
+                          "ui-order-priority": 424
+                        }
+                      },
+                      "tokenURL": {
+                        "description": "Token endpoint URL of the OAuth authorization server.",
+                        "title": "Token URL",
+                        "type": "string",
+                        "x-eda-nokia-com": {
+                          "i18n-keys": {
+                            "description": "crd.MCPClient.spec.auth.clientCredentials.tokenURL._description",
+                            "title": "crd.MCPClient.spec.auth.clientCredentials.tokenURL._title"
+                          },
+                          "ui-order-priority": 421
+                        }
+                      }
+                    },
+                    "required": [
+                      "clientID",
+                      "clientSecretRef",
+                      "tokenURL"
+                    ],
+                    "title": "OAuth Client Credentials",
+                    "type": "object",
+                    "x-eda-nokia-com": {
+                      "i18n-keys": {
+                        "description": "crd.MCPClient.spec.auth.clientCredentials._description",
+                        "title": "crd.MCPClient.spec.auth.clientCredentials._title"
+                      },
+                      "ui-order-priority": 420
+                    }
+                  }
+                },
+                "title": "Authentication",
+                "type": "object",
+                "x-eda-nokia-com": {
+                  "i18n-keys": {
+                    "description": "crd.MCPClient.spec.auth._description",
+                    "title": "crd.MCPClient.spec.auth._title"
+                  },
+                  "ui-order-priority": 400
+                }
+              },
+              "description": {
+                "description": "A brief description of the remote MCP server.",
+                "title": "Description",
+                "type": "string",
+                "x-eda-nokia-com": {
+                  "i18n-keys": {
+                    "description": "crd.MCPClient.spec.description._description",
+                    "title": "crd.MCPClient.spec.description._title"
+                  },
+                  "ui-order-priority": 200
+                }
+              },
+              "enabled": {
+                "default": true,
+                "description": "Whether this remote MCP client connection is enabled.\nWhen disabled, EDA will not connect to the remote server\nand no primitives are imported.",
+                "title": "Enabled",
+                "type": "boolean",
+                "x-eda-nokia-com": {
+                  "i18n-keys": {
+                    "description": "crd.MCPClient.spec.enabled._description",
+                    "title": "crd.MCPClient.spec.enabled._title"
+                  },
+                  "ui-order-priority": 50
+                }
+              },
+              "endpoint": {
+                "description": "Endpoint configuration for reaching the remote MCP server.",
+                "properties": {
+                  "headers": {
+                    "description": "Additional HTTP headers to include on every request to the\nremote MCP server. Headers carrying secrets should reference a\nKubernetes Secret via Auth instead of being set here.",
+                    "items": {
+                      "properties": {
+                        "name": {
+                          "description": "Header name",
+                          "title": "Name",
+                          "type": "string",
+                          "x-eda-nokia-com": {
+                            "i18n-keys": {
+                              "description": "crd.MCPClient.spec.endpoint.headers._items.name._description",
+                              "title": "crd.MCPClient.spec.endpoint.headers._items.name._title"
+                            },
+                            "ui-order-priority": 731
+                          }
+                        },
+                        "value": {
+                          "description": "Header value",
+                          "title": "Value",
+                          "type": "string",
+                          "x-eda-nokia-com": {
+                            "i18n-keys": {
+                              "description": "crd.MCPClient.spec.endpoint.headers._items.value._description",
+                              "title": "crd.MCPClient.spec.endpoint.headers._items.value._title"
+                            },
+                            "ui-order-priority": 732
+                          }
+                        }
+                      },
+                      "type": "object"
+                    },
+                    "title": "Headers",
+                    "type": "array",
+                    "x-eda-nokia-com": {
+                      "i18n-keys": {
+                        "description": "crd.MCPClient.spec.endpoint.headers._description",
+                        "title": "crd.MCPClient.spec.endpoint.headers._title"
+                      },
+                      "ui-order-priority": 320
+                    }
+                  },
+                  "healthCheckIntervalSeconds": {
+                    "default": 60,
+                    "description": "Time between connection health checks (and re-discovery of\nremote primitives) in seconds. Default 60 seconds.",
+                    "minimum": 1,
+                    "title": "Health Check Interval",
+                    "type": "integer",
+                    "x-eda-nokia-com": {
+                      "i18n-keys": {
+                        "description": "crd.MCPClient.spec.endpoint.healthCheckIntervalSeconds._description",
+                        "title": "crd.MCPClient.spec.endpoint.healthCheckIntervalSeconds._title"
+                      },
+                      "ui-order-priority": 340
+                    }
+                  },
+                  "skipVerify": {
+                    "default": false,
+                    "description": "InsecureSkipVerify disables TLS certificate validation when\nconnecting to the remote MCP server. Should only be used for\ndevelopment. Defaults to false.",
+                    "title": "Skip Verify",
+                    "type": "boolean",
+                    "x-eda-nokia-com": {
+                      "i18n-keys": {
+                        "description": "crd.MCPClient.spec.endpoint.skipVerify._description",
+                        "title": "crd.MCPClient.spec.endpoint.skipVerify._title"
+                      },
+                      "ui-order-priority": 360
+                    }
+                  },
+                  "timeoutSeconds": {
+                    "default": 30,
+                    "description": "Per-request timeout in seconds for calls to the remote MCP\nserver. Default 30 seconds.",
+                    "minimum": 1,
+                    "title": "Timeout",
+                    "type": "integer",
+                    "x-eda-nokia-com": {
+                      "i18n-keys": {
+                        "description": "crd.MCPClient.spec.endpoint.timeoutSeconds._description",
+                        "title": "crd.MCPClient.spec.endpoint.timeoutSeconds._title"
+                      },
+                      "ui-order-priority": 330
+                    }
+                  },
+                  "trustBundle": {
+                    "description": "TrustBundle for TLS verification, a reference (by name) to a\nConfigMap containing one or more PEM-encoded CA certificates.\nIf empty, the system default trust bundle is used.",
+                    "title": "Trust Bundle",
+                    "type": "string",
+                    "x-eda-nokia-com": {
+                      "i18n-keys": {
+                        "description": "crd.MCPClient.spec.endpoint.trustBundle._description",
+                        "title": "crd.MCPClient.spec.endpoint.trustBundle._title"
+                      },
+                      "ui-order-priority": 350
+                    }
+                  },
+                  "url": {
+                    "description": "URL of the remote MCP server's Streamable HTTP endpoint.\nIncludes scheme, host, port, and path.",
+                    "title": "URL",
+                    "type": "string",
+                    "x-eda-nokia-com": {
+                      "i18n-keys": {
+                        "description": "crd.MCPClient.spec.endpoint.url._description",
+                        "title": "crd.MCPClient.spec.endpoint.url._title"
+                      },
+                      "ui-order-priority": 310
+                    }
+                  }
+                },
+                "required": [
+                  "url"
+                ],
+                "title": "Endpoint",
+                "type": "object",
+                "x-eda-nokia-com": {
+                  "i18n-keys": {
+                    "description": "crd.MCPClient.spec.endpoint._description",
+                    "title": "crd.MCPClient.spec.endpoint._title"
+                  },
+                  "ui-order-priority": 300
+                }
+              },
+              "imports": {
+                "description": "Imports controls which primitives advertised by the remote MCP\nserver are exposed through EDA's MCP surface.",
+                "properties": {
+                  "prompts": {
+                    "description": "Prompt import configuration.",
+                    "properties": {
+                      "allow": {
+                        "description": "Allow list of primitive names. When non-empty, only listed\nnames are imported. Supports Regex matching.\nExample:\n- Allow: [\"^route-lookup$\"]\n- Allow: [\"route-lookup\"]\n- Allow: [\"route-lookup.*\"]\n- Allow: [\"route-lookup.*\"]",
+                        "items": {
+                          "type": "string"
+                        },
+                        "title": "Allow",
+                        "type": "array",
+                        "x-eda-nokia-com": {
+                          "i18n-keys": {
+                            "description": "crd.MCPClient.spec.imports.tools.allow._description",
+                            "title": "crd.MCPClient.spec.imports.tools.allow._title"
+                          },
+                          "ui-order-priority": 20
+                        }
+                      },
+                      "deny": {
+                        "description": "Deny list of primitive names. Names listed here are excluded\neven if they appear in Allow.\nSupports Regex matching.\nExample:\n- Deny: [\"^route-lookup$\"]\n- Deny: [\"route-lookup\"]\n- Deny: [\"route-lookup.*\"]\n- Deny: [\"route-lookup.*\"]",
+                        "items": {
+                          "type": "string"
+                        },
+                        "title": "Deny",
+                        "type": "array",
+                        "x-eda-nokia-com": {
+                          "i18n-keys": {
+                            "description": "crd.MCPClient.spec.imports.tools.deny._description",
+                            "title": "crd.MCPClient.spec.imports.tools.deny._title"
+                          },
+                          "ui-order-priority": 30
+                        }
+                      },
+                      "enabled": {
+                        "default": true,
+                        "description": "Whether to import primitives of this kind.",
+                        "title": "Enabled",
+                        "type": "boolean",
+                        "x-eda-nokia-com": {
+                          "i18n-keys": {
+                            "description": "crd.MCPClient.spec.imports.tools.enabled._description",
+                            "title": "crd.MCPClient.spec.imports.tools.enabled._title"
+                          },
+                          "ui-order-priority": 10
+                        }
+                      }
+                    },
+                    "title": "Prompts",
+                    "type": "object",
+                    "x-eda-nokia-com": {
+                      "i18n-keys": {
+                        "description": "crd.MCPClient.spec.imports.prompts._description",
+                        "title": "crd.MCPClient.spec.imports.prompts._title"
+                      },
+                      "ui-order-priority": 530
+                    }
+                  },
+                  "resources": {
+                    "description": "Resource import configuration.",
+                    "properties": {
+                      "allow": {
+                        "description": "Allow list of primitive names. When non-empty, only listed\nnames are imported. Supports Regex matching.\nExample:\n- Allow: [\"^route-lookup$\"]\n- Allow: [\"route-lookup\"]\n- Allow: [\"route-lookup.*\"]\n- Allow: [\"route-lookup.*\"]",
+                        "items": {
+                          "type": "string"
+                        },
+                        "title": "Allow",
+                        "type": "array",
+                        "x-eda-nokia-com": {
+                          "i18n-keys": {
+                            "description": "crd.MCPClient.spec.imports.tools.allow._description",
+                            "title": "crd.MCPClient.spec.imports.tools.allow._title"
+                          },
+                          "ui-order-priority": 20
+                        }
+                      },
+                      "deny": {
+                        "description": "Deny list of primitive names. Names listed here are excluded\neven if they appear in Allow.\nSupports Regex matching.\nExample:\n- Deny: [\"^route-lookup$\"]\n- Deny: [\"route-lookup\"]\n- Deny: [\"route-lookup.*\"]\n- Deny: [\"route-lookup.*\"]",
+                        "items": {
+                          "type": "string"
+                        },
+                        "title": "Deny",
+                        "type": "array",
+                        "x-eda-nokia-com": {
+                          "i18n-keys": {
+                            "description": "crd.MCPClient.spec.imports.tools.deny._description",
+                            "title": "crd.MCPClient.spec.imports.tools.deny._title"
+                          },
+                          "ui-order-priority": 30
+                        }
+                      },
+                      "enabled": {
+                        "default": true,
+                        "description": "Whether to import primitives of this kind.",
+                        "title": "Enabled",
+                        "type": "boolean",
+                        "x-eda-nokia-com": {
+                          "i18n-keys": {
+                            "description": "crd.MCPClient.spec.imports.tools.enabled._description",
+                            "title": "crd.MCPClient.spec.imports.tools.enabled._title"
+                          },
+                          "ui-order-priority": 10
+                        }
+                      }
+                    },
+                    "title": "Resources",
+                    "type": "object",
+                    "x-eda-nokia-com": {
+                      "i18n-keys": {
+                        "description": "crd.MCPClient.spec.imports.resources._description",
+                        "title": "crd.MCPClient.spec.imports.resources._title"
+                      },
+                      "ui-order-priority": 520
+                    }
+                  },
+                  "tools": {
+                    "description": "Tool import configuration.",
+                    "properties": {
+                      "allow": {
+                        "description": "Allow list of primitive names. When non-empty, only listed\nnames are imported. Supports Regex matching.\nExample:\n- Allow: [\"^route-lookup$\"]\n- Allow: [\"route-lookup\"]\n- Allow: [\"route-lookup.*\"]\n- Allow: [\"route-lookup.*\"]",
+                        "items": {
+                          "type": "string"
+                        },
+                        "title": "Allow",
+                        "type": "array",
+                        "x-eda-nokia-com": {
+                          "i18n-keys": {
+                            "description": "crd.MCPClient.spec.imports.tools.allow._description",
+                            "title": "crd.MCPClient.spec.imports.tools.allow._title"
+                          },
+                          "ui-order-priority": 20
+                        }
+                      },
+                      "deny": {
+                        "description": "Deny list of primitive names. Names listed here are excluded\neven if they appear in Allow.\nSupports Regex matching.\nExample:\n- Deny: [\"^route-lookup$\"]\n- Deny: [\"route-lookup\"]\n- Deny: [\"route-lookup.*\"]\n- Deny: [\"route-lookup.*\"]",
+                        "items": {
+                          "type": "string"
+                        },
+                        "title": "Deny",
+                        "type": "array",
+                        "x-eda-nokia-com": {
+                          "i18n-keys": {
+                            "description": "crd.MCPClient.spec.imports.tools.deny._description",
+                            "title": "crd.MCPClient.spec.imports.tools.deny._title"
+                          },
+                          "ui-order-priority": 30
+                        }
+                      },
+                      "enabled": {
+                        "default": true,
+                        "description": "Whether to import primitives of this kind.",
+                        "title": "Enabled",
+                        "type": "boolean",
+                        "x-eda-nokia-com": {
+                          "i18n-keys": {
+                            "description": "crd.MCPClient.spec.imports.tools.enabled._description",
+                            "title": "crd.MCPClient.spec.imports.tools.enabled._title"
+                          },
+                          "ui-order-priority": 10
+                        }
+                      }
+                    },
+                    "title": "Tools",
+                    "type": "object",
+                    "x-eda-nokia-com": {
+                      "i18n-keys": {
+                        "description": "crd.MCPClient.spec.imports.tools._description",
+                        "title": "crd.MCPClient.spec.imports.tools._title"
+                      },
+                      "ui-order-priority": 510
+                    }
+                  }
+                },
+                "title": "Imports",
+                "type": "object",
+                "x-eda-nokia-com": {
+                  "i18n-keys": {
+                    "description": "crd.MCPClient.spec.imports._description",
+                    "title": "crd.MCPClient.spec.imports._title"
+                  },
+                  "ui-order-priority": 500
+                }
+              },
+              "title": {
+                "description": "A human friendly title for the remote MCP server.",
+                "title": "Title",
+                "type": "string",
+                "x-eda-nokia-com": {
+                  "i18n-keys": {
+                    "description": "crd.MCPClient.spec.title._description",
+                    "title": "crd.MCPClient.spec.title._title"
+                  },
+                  "ui-order-priority": 100
+                }
+              }
+            },
+            "required": [
+              "endpoint"
+            ],
+            "title": "Specification",
+            "type": "object",
+            "x-eda-nokia-com": {
+              "i18n-keys": {
+                "description": "crd.MCPClient.spec._description",
+                "title": "crd.MCPClient.spec._title"
+              },
+              "ui-order-priority": 30
+            }
+          },
+          "status": {
+            "description": "MCPClientStatus defines the observed state of an MCPClient.",
+            "properties": {
+              "advertisedCapabilities": {
+                "description": "AdvertisedCapabilities reports the capabilities the remote\nMCP server advertised during `initialize`.",
+                "properties": {
+                  "completions": {
+                    "description": "Whether the remote server exposes argument completions.",
+                    "title": "Completions",
+                    "type": "boolean",
+                    "x-eda-nokia-com": {
+                      "i18n-keys": {
+                        "description": "crd.MCPClient.status.advertisedCapabilities.completions._description",
+                        "title": "crd.MCPClient.status.advertisedCapabilities.completions._title"
+                      },
+                      "ui-order-priority": 50
+                    }
+                  },
+                  "logging": {
+                    "description": "Whether the remote server exposes the logging capability.",
+                    "title": "Logging",
+                    "type": "boolean",
+                    "x-eda-nokia-com": {
+                      "i18n-keys": {
+                        "description": "crd.MCPClient.status.advertisedCapabilities.logging._description",
+                        "title": "crd.MCPClient.status.advertisedCapabilities.logging._title"
+                      },
+                      "ui-order-priority": 40
+                    }
+                  },
+                  "promptListChangedNotifications": {
+                    "description": "Whether the remote server emits prompt list-changed\nnotifications.",
+                    "title": "Prompt List Changed Notifications",
+                    "type": "boolean",
+                    "x-eda-nokia-com": {
+                      "i18n-keys": {
+                        "description": "crd.MCPClient.status.advertisedCapabilities.promptListChangedNotifications._description",
+                        "title": "crd.MCPClient.status.advertisedCapabilities.promptListChangedNotifications._title"
+                      },
+                      "ui-order-priority": 70
+                    }
+                  },
+                  "prompts": {
+                    "description": "Whether the remote server exposes prompts.",
+                    "title": "Prompts",
+                    "type": "boolean",
+                    "x-eda-nokia-com": {
+                      "i18n-keys": {
+                        "description": "crd.MCPClient.status.advertisedCapabilities.prompts._description",
+                        "title": "crd.MCPClient.status.advertisedCapabilities.prompts._title"
+                      },
+                      "ui-order-priority": 30
+                    }
+                  },
+                  "resourceListChangedNotifications": {
+                    "description": "Whether the remote server emits resource list-changed\nnotifications.",
+                    "title": "Resource List Changed Notifications",
+                    "type": "boolean",
+                    "x-eda-nokia-com": {
+                      "i18n-keys": {
+                        "description": "crd.MCPClient.status.advertisedCapabilities.resourceListChangedNotifications._description",
+                        "title": "crd.MCPClient.status.advertisedCapabilities.resourceListChangedNotifications._title"
+                      },
+                      "ui-order-priority": 80
+                    }
+                  },
+                  "resourceSubscribe": {
+                    "description": "Whether the remote server supports resource subscriptions.",
+                    "title": "Resource Subscribe",
+                    "type": "boolean",
+                    "x-eda-nokia-com": {
+                      "i18n-keys": {
+                        "description": "crd.MCPClient.status.advertisedCapabilities.resourceSubscribe._description",
+                        "title": "crd.MCPClient.status.advertisedCapabilities.resourceSubscribe._title"
+                      },
+                      "ui-order-priority": 60
+                    }
+                  },
+                  "resources": {
+                    "description": "Whether the remote server exposes resources.",
+                    "title": "Resources",
+                    "type": "boolean",
+                    "x-eda-nokia-com": {
+                      "i18n-keys": {
+                        "description": "crd.MCPClient.status.advertisedCapabilities.resources._description",
+                        "title": "crd.MCPClient.status.advertisedCapabilities.resources._title"
+                      },
+                      "ui-order-priority": 20
+                    }
+                  },
+                  "toolListChangedNotifications": {
+                    "description": "Whether the remote server emits tool list-changed\nnotifications.",
+                    "title": "Tool List Changed Notifications",
+                    "type": "boolean",
+                    "x-eda-nokia-com": {
+                      "i18n-keys": {
+                        "description": "crd.MCPClient.status.advertisedCapabilities.toolListChangedNotifications._description",
+                        "title": "crd.MCPClient.status.advertisedCapabilities.toolListChangedNotifications._title"
+                      },
+                      "ui-order-priority": 90
+                    }
+                  },
+                  "tools": {
+                    "description": "Whether the remote server exposes tools.",
+                    "title": "Tools",
+                    "type": "boolean",
+                    "x-eda-nokia-com": {
+                      "i18n-keys": {
+                        "description": "crd.MCPClient.status.advertisedCapabilities.tools._description",
+                        "title": "crd.MCPClient.status.advertisedCapabilities.tools._title"
+                      },
+                      "ui-order-priority": 10
+                    }
+                  }
+                },
+                "title": "Advertised Capabilities",
+                "type": "object",
+                "x-eda-nokia-com": {
+                  "i18n-keys": {
+                    "description": "crd.MCPClient.status.advertisedCapabilities._description",
+                    "title": "crd.MCPClient.status.advertisedCapabilities._title"
+                  },
+                  "ui-order-priority": 500
+                }
+              },
+              "connected": {
+                "description": "Whether EDA is currently connected to the remote MCP server.",
+                "title": "Connected",
+                "type": "boolean",
+                "x-eda-nokia-com": {
+                  "i18n-keys": {
+                    "description": "crd.MCPClient.status.connected._description",
+                    "title": "crd.MCPClient.status.connected._title"
+                  },
+                  "ui-order-priority": 100
+                }
+              },
+              "error": {
+                "description": "Error message describing the most recent connection or\ninitialization failure. Empty when Connected is true.",
+                "title": "Error",
+                "type": "string",
+                "x-eda-nokia-com": {
+                  "i18n-keys": {
+                    "description": "crd.MCPClient.status.error._description",
+                    "title": "crd.MCPClient.status.error._title"
+                  },
+                  "ui-order-priority": 200
+                }
+              },
+              "importedCounts": {
+                "description": "ImportedCounts reports how many primitives of each kind are\ncurrently imported into EDA's MCP surface.",
+                "properties": {
+                  "prompts": {
+                    "description": "Number of prompts imported from the remote MCP server.",
+                    "format": "int32",
+                    "title": "Prompts",
+                    "type": "integer",
+                    "x-eda-nokia-com": {
+                      "i18n-keys": {
+                        "description": "crd.MCPClient.status.importedCounts.prompts._description",
+                        "title": "crd.MCPClient.status.importedCounts.prompts._title"
+                      },
+                      "ui-order-priority": 30
+                    }
+                  },
+                  "resources": {
+                    "description": "Number of resources imported from the remote MCP server.",
+                    "format": "int32",
+                    "title": "Resources",
+                    "type": "integer",
+                    "x-eda-nokia-com": {
+                      "i18n-keys": {
+                        "description": "crd.MCPClient.status.importedCounts.resources._description",
+                        "title": "crd.MCPClient.status.importedCounts.resources._title"
+                      },
+                      "ui-order-priority": 20
+                    }
+                  },
+                  "tools": {
+                    "description": "Number of tools imported from the remote MCP server.",
+                    "format": "int32",
+                    "title": "Tools",
+                    "type": "integer",
+                    "x-eda-nokia-com": {
+                      "i18n-keys": {
+                        "description": "crd.MCPClient.status.importedCounts.tools._description",
+                        "title": "crd.MCPClient.status.importedCounts.tools._title"
+                      },
+                      "ui-order-priority": 10
+                    }
+                  }
+                },
+                "title": "Imported Counts",
+                "type": "object",
+                "x-eda-nokia-com": {
+                  "i18n-keys": {
+                    "description": "crd.MCPClient.status.importedCounts._description",
+                    "title": "crd.MCPClient.status.importedCounts._title"
+                  },
+                  "ui-order-priority": 600
+                }
+              },
+              "lastChecked": {
+                "description": "Last time the connection to the remote MCP server was\nvalidated.",
+                "format": "date-time",
+                "title": "Last Checked",
+                "type": "string",
+                "x-eda-nokia-com": {
+                  "i18n-keys": {
+                    "description": "crd.MCPClient.status.lastChecked._description",
+                    "title": "crd.MCPClient.status.lastChecked._title"
+                  },
+                  "ui-order-priority": 300
+                }
+              },
+              "serverInfo": {
+                "description": "ServerInfo reports the identity of the remote MCP server as\nreturned in its `initialize` response.",
+                "properties": {
+                  "name": {
+                    "description": "Server name as reported by the remote MCP server.",
+                    "title": "Name",
+                    "type": "string",
+                    "x-eda-nokia-com": {
+                      "i18n-keys": {
+                        "description": "crd.MCPClient.status.serverInfo.name._description",
+                        "title": "crd.MCPClient.status.serverInfo.name._title"
+                      },
+                      "ui-order-priority": 10
+                    }
+                  },
+                  "protocolVersion": {
+                    "description": "MCP protocol version negotiated with the remote MCP server.",
+                    "title": "Protocol Version",
+                    "type": "string",
+                    "x-eda-nokia-com": {
+                      "i18n-keys": {
+                        "description": "crd.MCPClient.status.serverInfo.protocolVersion._description",
+                        "title": "crd.MCPClient.status.serverInfo.protocolVersion._title"
+                      },
+                      "ui-order-priority": 30
+                    }
+                  },
+                  "version": {
+                    "description": "Server version as reported by the remote MCP server.",
+                    "title": "Version",
+                    "type": "string",
+                    "x-eda-nokia-com": {
+                      "i18n-keys": {
+                        "description": "crd.MCPClient.status.serverInfo.version._description",
+                        "title": "crd.MCPClient.status.serverInfo.version._title"
+                      },
+                      "ui-order-priority": 20
+                    }
+                  }
+                },
+                "title": "Server Info",
+                "type": "object",
+                "x-eda-nokia-com": {
+                  "i18n-keys": {
+                    "description": "crd.MCPClient.status.serverInfo._description",
+                    "title": "crd.MCPClient.status.serverInfo._title"
+                  },
+                  "ui-order-priority": 400
+                }
+              }
+            },
+            "readOnly": true,
+            "required": [
+              "connected"
+            ],
+            "title": "Status",
+            "type": "object",
+            "x-eda-nokia-com": {
+              "i18n-keys": {
+                "description": "crd.MCPClient.status._description",
+                "title": "crd.MCPClient.status._title"
+              },
+              "ui-order-priority": 20
+            }
+          }
+        },
+        "required": [
+          "apiVersion",
+          "kind",
+          "metadata",
+          "spec"
+        ],
+        "type": "object",
+        "x-eda-nokia-com": {
+          "i18n-keys": {
+            "description": "crd.MCPClient._description",
+            "group": "ai.core.eda.nokia.com"
+          }
+        }
+      },
+      "com.nokia.eda.core.ai.v1.MCPClientList": {
+        "description": "MCPClientList is a list of mcpclients",
+        "properties": {
+          "apiVersion": {
+            "type": "string"
+          },
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/com.nokia.eda.core.ai.v1.MCPClient"
+            },
+            "type": "array"
+          },
+          "kind": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "apiVersion",
+          "kind"
+        ],
+        "type": "object"
+      },
+      "com.nokia.eda.core.ai.v1.MCPClient_DeletedResourceEntry": {
+        "properties": {
+          "commitTime": {
+            "format": "date-time",
+            "type": "string",
+            "x-eda-nokia-com": {
+              "i18n-keys": {
+                "group": "core.eda.nokia.com",
+                "title": "commitTime"
+              },
+              "ui-order-priority": 50,
+              "ui-title": "Commit Time",
+              "ui-title-key": "commitTime"
+            }
+          },
+          "hash": {
+            "type": "string",
+            "x-eda-nokia-com": {
+              "i18n-keys": {
+                "group": "core.eda.nokia.com",
+                "title": "commitHash"
+              },
+              "ui-order-priority": 40,
+              "ui-title": "Commit Hash",
+              "ui-title-key": "commitHash"
+            }
+          },
+          "name": {
+            "type": "string",
+            "x-eda-nokia-com": {
+              "i18n-keys": {
+                "group": "core.eda.nokia.com",
+                "title": "name"
+              },
+              "key": {
+                "index": 2,
+                "is-name": true
+              },
+              "ui-order-priority": 10,
+              "ui-title": "Name",
+              "ui-title-key": "name"
+            }
+          },
+          "namespace": {
+            "type": "string",
+            "x-eda-nokia-com": {
+              "i18n-keys": {
+                "group": "core.eda.nokia.com",
+                "title": "namespace"
+              },
+              "key": {
+                "index": 1,
+                "is-namespace": true
+              },
+              "ui-order-priority": 20,
+              "ui-title": "Namespace",
+              "ui-title-key": "namespace"
+            }
+          },
+          "transactionId": {
+            "format": "uint64",
+            "type": "integer",
+            "x-eda-nokia-com": {
+              "i18n-keys": {
+                "group": "core.eda.nokia.com",
+                "title": "transactionId"
+              },
+              "ui-order-priority": 30,
+              "ui-title": "Transaction ID",
+              "ui-title-key": "transactionId"
+            }
+          }
+        },
+        "type": "object"
+      },
+      "com.nokia.eda.core.ai.v1.MCPClient_DeletedResources": {
+        "items": {
+          "$ref": "#/components/schemas/com.nokia.eda.core.ai.v1.MCPClient_DeletedResourceEntry"
+        },
+        "type": "array"
+      },
+      "com.nokia.eda.core.ai.v1.MCPClient_alarms": {
+        "properties": {
+          "critical": {
+            "format": "int64",
+            "readOnly": true,
+            "type": "integer",
+            "x-eda-nokia-com": {
+              "i18n-keys": {
+                "title": "alarm_severities.critical"
+              },
+              "ui-title": "Critical",
+              "ui-title-key": "alarm_severities.critical"
+            }
+          },
+          "major": {
+            "format": "int64",
+            "readOnly": true,
+            "type": "integer",
+            "x-eda-nokia-com": {
+              "i18n-keys": {
+                "title": "alarm_severities.major"
+              },
+              "ui-title": "Major",
+              "ui-title-key": "alarm_severities.major"
+            }
+          },
+          "minor": {
+            "format": "int64",
+            "readOnly": true,
+            "type": "integer",
+            "x-eda-nokia-com": {
+              "i18n-keys": {
+                "title": "alarm_severities.minor"
+              },
+              "ui-title": "minor",
+              "ui-title-key": "alarm_severities.minor"
+            }
+          },
+          "warning": {
+            "format": "int64",
+            "readOnly": true,
+            "type": "integer",
+            "x-eda-nokia-com": {
+              "i18n-keys": {
+                "title": "alarm_severities.warning"
+              },
+              "ui-title": "Warning",
+              "ui-title-key": "alarm_severities.warning"
+            }
+          }
+        },
+        "readOnly": true,
+        "type": "object",
+        "x-eda-nokia-com": {
+          "i18n-keys": {
+            "group": "core.eda.nokia.com",
+            "title": "alarms"
+          },
+          "ui-order-priority": 40,
+          "ui-title": "Alarms",
+          "ui-title-key": "alarms"
+        }
+      },
+      "com.nokia.eda.core.ai.v1.MCPClient_deviations": {
+        "properties": {
+          "count": {
+            "format": "int64",
+            "readOnly": true,
+            "type": "integer",
+            "x-eda-nokia-com": {
+              "i18n-keys": {
+                "title": "count_column"
+              },
+              "ui-title": "Count",
+              "ui-title-key": "count_column"
+            }
+          }
+        },
+        "readOnly": true,
+        "type": "object",
+        "x-eda-nokia-com": {
+          "i18n-keys": {
+            "group": "core.eda.nokia.com",
+            "title": "deviations"
+          },
+          "ui-order-priority": 50,
+          "ui-title": "Deviations",
+          "ui-title-key": "deviations"
+        }
+      },
+      "com.nokia.eda.core.ai.v1.MCPClient_metadata": {
+        "properties": {
+          "annotations": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "type": "object",
+            "x-eda-nokia-com": {
+              "i18n-keys": {
+                "title": "annotations"
+              },
+              "ui-order-priority": 40,
+              "ui-title": "Annotations",
+              "ui-title-key": "annotations"
+            }
+          },
+          "labels": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "type": "object",
+            "x-eda-nokia-com": {
+              "i18n-keys": {
+                "title": "labels"
+              },
+              "ui-auto-completes": [
+                {
+                  "condition": "true",
+                  "group": "ai.core.eda.nokia.com",
+                  "kind": "MCPClient",
+                  "type": "label",
+                  "version": "v1"
+                }
+              ],
+              "ui-order-priority": 30,
+              "ui-title": "Labels",
+              "ui-title-key": "labels"
+            }
+          },
+          "name": {
+            "maxLength": 253,
+            "pattern": "^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$",
+            "type": "string",
+            "x-eda-nokia-com": {
+              "i18n-keys": {
+                "title": "name"
+              },
+              "immutable": true,
+              "key": {
+                "index": 2,
+                "is-mirror": true,
+                "is-name": true
+              },
+              "ui-order-priority": 10,
+              "ui-pattern-error": "A valid name is made up of one or more components where each component is separated by period characters.  Each component must start and end with a lower case alphanumeric character and the body of the component is made up of zero or more lower case alphanumeric and hyphen characters.",
+              "ui-title": "Name",
+              "ui-title-key": "name"
+            }
+          },
+          "namespace": {
+            "default": "eda-system",
+            "type": "string",
+            "x-eda-nokia-com": {
+              "i18n-keys": {
+                "title": "namespace"
+              },
+              "immutable": true,
+              "key": {
+                "index": 1,
+                "is-mirror": true,
+                "is-namespace": true
+              },
+              "ui-order-priority": 20,
+              "ui-title": "Namespace",
+              "ui-title-key": "namespace",
+              "ui-visible-if": "false"
+            }
+          }
+        },
+        "required": [
+          "name"
+        ],
+        "type": "object",
+        "x-eda-nokia-com": {
+          "i18n-keys": {
+            "group": "core.eda.nokia.com",
+            "title": "metadata"
+          },
+          "ui-order-priority": 10,
+          "ui-title": "Metadata",
+          "ui-title-key": "metadata"
+        }
+      },
       "com.nokia.eda.core.ai.v1.MCPPromptTemplate": {
         "description": "MCPPromptTemplate is the Schema for the mcpprompttemplates API",
         "properties": {
@@ -934,11 +2104,54 @@
                 "description": "List of arguments for the prompt",
                 "items": {
                   "properties": {
+                    "autocomplete": {
+                      "description": "Autocomplete string for the argument\nExamples:\n- '{\"type\":\"gvr\", \"group\":\"core.eda.nokia.com\", \"version\":\"v1\", \"resource\":\"namespaces\"}'\n- '{\"type\":\"query\", \"table\":\".namespace.node.srl\", \"field\": \".namespace.node.name\", \"where\": \"version = \\\"26.3.1\\\"\"}'\n- '{\"type\":\"labelselector\", \"group\":\"core.eda.nokia.com\", \"kind\":\"TopoNode\"}'",
+                      "title": "Autocomplete",
+                      "type": "string",
+                      "x-eda-nokia-com": {
+                        "i18n-keys": {
+                          "description": "crd.MCPPromptTemplate.spec.arguments._items.autocomplete._description",
+                          "title": "crd.MCPPromptTemplate.spec.arguments._items.autocomplete._title"
+                        },
+                        "ui-order-priority": 450
+                      }
+                    },
+                    "choices": {
+                      "description": "Choices for the argument",
+                      "items": {
+                        "type": "string"
+                      },
+                      "title": "Choices",
+                      "type": "array",
+                      "x-eda-nokia-com": {
+                        "i18n-keys": {
+                          "description": "crd.MCPPromptTemplate.spec.arguments._items.choices._description",
+                          "title": "crd.MCPPromptTemplate.spec.arguments._items.choices._title"
+                        },
+                        "ui-order-priority": 460
+                      }
+                    },
+                    "default": {
+                      "description": "Whether the argument is hidden",
+                      "title": "Hidden",
+                      "type": "string",
+                      "x-eda-nokia-com": {
+                        "i18n-keys": {
+                          "description": "crd.MCPPromptTemplate.spec.arguments._items.default._description",
+                          "title": "crd.MCPPromptTemplate.spec.arguments._items.default._title"
+                        },
+                        "ui-order-priority": 470
+                      }
+                    },
                     "description": {
                       "description": "A brief description of the argument",
                       "title": "Description",
                       "type": "string",
                       "x-eda-nokia-com": {
+                        "i18n-keys": {
+                          "description": "crd.MCPPromptTemplate.spec.arguments._items.description._description",
+                          "title": "crd.MCPPromptTemplate.spec.arguments._items.description._title"
+                        },
                         "ui-order-priority": 430
                       }
                     },
@@ -947,6 +2160,10 @@
                       "title": "Name",
                       "type": "string",
                       "x-eda-nokia-com": {
+                        "i18n-keys": {
+                          "description": "crd.MCPPromptTemplate.spec.arguments._items.name._description",
+                          "title": "crd.MCPPromptTemplate.spec.arguments._items.name._title"
+                        },
                         "ui-order-priority": 410
                       }
                     },
@@ -955,6 +2172,10 @@
                       "title": "Required",
                       "type": "boolean",
                       "x-eda-nokia-com": {
+                        "i18n-keys": {
+                          "description": "crd.MCPPromptTemplate.spec.arguments._items.required._description",
+                          "title": "crd.MCPPromptTemplate.spec.arguments._items.required._title"
+                        },
                         "ui-order-priority": 440
                       }
                     },
@@ -963,6 +2184,10 @@
                       "title": "Title",
                       "type": "string",
                       "x-eda-nokia-com": {
+                        "i18n-keys": {
+                          "description": "crd.MCPPromptTemplate.spec.arguments._items.title._description",
+                          "title": "crd.MCPPromptTemplate.spec.arguments._items.title._title"
+                        },
                         "ui-order-priority": 420
                       }
                     }
@@ -972,6 +2197,10 @@
                 "title": "Arguments",
                 "type": "array",
                 "x-eda-nokia-com": {
+                  "i18n-keys": {
+                    "description": "crd.MCPPromptTemplate.spec.arguments._description",
+                    "title": "crd.MCPPromptTemplate.spec.arguments._title"
+                  },
                   "ui-order-priority": 400
                 }
               },
@@ -987,6 +2216,10 @@
                           "title": "URI",
                           "type": "string",
                           "x-eda-nokia-com": {
+                            "i18n-keys": {
+                              "description": "crd.MCPPromptTemplate.spec.content._items.resource.uri._description",
+                              "title": "crd.MCPPromptTemplate.spec.content._items.resource.uri._title"
+                            },
                             "ui-order-priority": 340
                           }
                         }
@@ -994,6 +2227,10 @@
                       "title": "Resource",
                       "type": "object",
                       "x-eda-nokia-com": {
+                        "i18n-keys": {
+                          "description": "crd.MCPPromptTemplate.spec.content._items.resource._description",
+                          "title": "crd.MCPPromptTemplate.spec.content._items.resource._title"
+                        },
                         "ui-order-priority": 330,
                         "ui-visible-if": "self.type === \"resource\""
                       }
@@ -1004,12 +2241,22 @@
                         "template": {
                           "description": "The text content template",
                           "title": "Template",
-                          "type": "string"
+                          "type": "string",
+                          "x-eda-nokia-com": {
+                            "i18n-keys": {
+                              "description": "crd.MCPPromptTemplate.spec.content._items.text.template._description",
+                              "title": "crd.MCPPromptTemplate.spec.content._items.text.template._title"
+                            }
+                          }
                         }
                       },
                       "title": "Text",
                       "type": "object",
                       "x-eda-nokia-com": {
+                        "i18n-keys": {
+                          "description": "crd.MCPPromptTemplate.spec.content._items.text._description",
+                          "title": "crd.MCPPromptTemplate.spec.content._items.text._title"
+                        },
                         "ui-order-priority": 320,
                         "ui-visible-if": "self.type === \"text\""
                       }
@@ -1023,10 +2270,21 @@
                       "title": "Type",
                       "type": "string",
                       "x-eda-nokia-com": {
+                        "i18n-keys": {
+                          "description": "crd.MCPPromptTemplate.spec.content._items.type._description",
+                          "enum": [
+                            "crd.MCPPromptTemplate.spec.content._items.type._enum.text",
+                            "crd.MCPPromptTemplate.spec.content._items.type._enum.resource"
+                          ],
+                          "title": "crd.MCPPromptTemplate.spec.content._items.type._title"
+                        },
                         "ui-conditions": [
                           {
                             "condition": "(type === \"text\" \u0026\u0026 isSet(\"self.text\") \u0026\u0026 !isSet(\"self.resource\")) || (type === \"resource\" \u0026\u0026 isSet(\"self.resource\") \u0026\u0026 !isSet(\"self.text\"))",
-                            "errorMsg": "Type must match content."
+                            "errorMsg": "Type must match content.",
+                            "i18n-keys": {
+                              "errorMsg": "crd.MCPPromptTemplate.spec.content._items.type._conditions._errorMsg.Type must match content."
+                            }
                           }
                         ],
                         "ui-order-priority": 310
@@ -1041,6 +2299,10 @@
                 "title": "Content",
                 "type": "array",
                 "x-eda-nokia-com": {
+                  "i18n-keys": {
+                    "description": "crd.MCPPromptTemplate.spec.content._description",
+                    "title": "crd.MCPPromptTemplate.spec.content._title"
+                  },
                   "ui-order-priority": 300
                 }
               },
@@ -1049,7 +2311,24 @@
                 "title": "Description",
                 "type": "string",
                 "x-eda-nokia-com": {
+                  "i18n-keys": {
+                    "description": "crd.MCPPromptTemplate.spec.description._description",
+                    "title": "crd.MCPPromptTemplate.spec.description._title"
+                  },
                   "ui-order-priority": 200
+                }
+              },
+              "enabled": {
+                "default": true,
+                "description": "Whether the prompt template is enabled",
+                "title": "Enabled",
+                "type": "boolean",
+                "x-eda-nokia-com": {
+                  "i18n-keys": {
+                    "description": "crd.MCPPromptTemplate.spec.enabled._description",
+                    "title": "crd.MCPPromptTemplate.spec.enabled._title"
+                  },
+                  "ui-order-priority": 50
                 }
               },
               "title": {
@@ -1057,6 +2336,10 @@
                 "title": "Title",
                 "type": "string",
                 "x-eda-nokia-com": {
+                  "i18n-keys": {
+                    "description": "crd.MCPPromptTemplate.spec.title._description",
+                    "title": "crd.MCPPromptTemplate.spec.title._title"
+                  },
                   "ui-order-priority": 100
                 }
               }
@@ -1068,6 +2351,10 @@
             "title": "Specification",
             "type": "object",
             "x-eda-nokia-com": {
+              "i18n-keys": {
+                "description": "crd.MCPPromptTemplate.spec._description",
+                "title": "crd.MCPPromptTemplate.spec._title"
+              },
               "ui-order-priority": 30
             }
           },
@@ -1077,6 +2364,10 @@
             "title": "Status",
             "type": "object",
             "x-eda-nokia-com": {
+              "i18n-keys": {
+                "description": "crd.MCPPromptTemplate.status._description",
+                "title": "crd.MCPPromptTemplate.status._title"
+              },
               "ui-order-priority": 20
             }
           }
@@ -1087,7 +2378,13 @@
           "metadata",
           "spec"
         ],
-        "type": "object"
+        "type": "object",
+        "x-eda-nokia-com": {
+          "i18n-keys": {
+            "description": "crd.MCPPromptTemplate._description",
+            "group": "ai.core.eda.nokia.com"
+          }
+        }
       },
       "com.nokia.eda.core.ai.v1.MCPPromptTemplateList": {
         "description": "MCPPromptTemplateList is a list of mcpprompttemplates",
@@ -1117,6 +2414,10 @@
             "format": "date-time",
             "type": "string",
             "x-eda-nokia-com": {
+              "i18n-keys": {
+                "group": "core.eda.nokia.com",
+                "title": "commitTime"
+              },
               "ui-order-priority": 50,
               "ui-title": "Commit Time",
               "ui-title-key": "commitTime"
@@ -1125,6 +2426,10 @@
           "hash": {
             "type": "string",
             "x-eda-nokia-com": {
+              "i18n-keys": {
+                "group": "core.eda.nokia.com",
+                "title": "commitHash"
+              },
               "ui-order-priority": 40,
               "ui-title": "Commit Hash",
               "ui-title-key": "commitHash"
@@ -1133,6 +2438,14 @@
           "name": {
             "type": "string",
             "x-eda-nokia-com": {
+              "i18n-keys": {
+                "group": "core.eda.nokia.com",
+                "title": "name"
+              },
+              "key": {
+                "index": 2,
+                "is-name": true
+              },
               "ui-order-priority": 10,
               "ui-title": "Name",
               "ui-title-key": "name"
@@ -1141,6 +2454,14 @@
           "namespace": {
             "type": "string",
             "x-eda-nokia-com": {
+              "i18n-keys": {
+                "group": "core.eda.nokia.com",
+                "title": "namespace"
+              },
+              "key": {
+                "index": 1,
+                "is-namespace": true
+              },
               "ui-order-priority": 20,
               "ui-title": "Namespace",
               "ui-title-key": "namespace"
@@ -1150,6 +2471,10 @@
             "format": "uint64",
             "type": "integer",
             "x-eda-nokia-com": {
+              "i18n-keys": {
+                "group": "core.eda.nokia.com",
+                "title": "transactionId"
+              },
               "ui-order-priority": 30,
               "ui-title": "Transaction ID",
               "ui-title-key": "transactionId"
@@ -1171,6 +2496,9 @@
             "readOnly": true,
             "type": "integer",
             "x-eda-nokia-com": {
+              "i18n-keys": {
+                "title": "alarm_severities.critical"
+              },
               "ui-title": "Critical",
               "ui-title-key": "alarm_severities.critical"
             }
@@ -1180,6 +2508,9 @@
             "readOnly": true,
             "type": "integer",
             "x-eda-nokia-com": {
+              "i18n-keys": {
+                "title": "alarm_severities.major"
+              },
               "ui-title": "Major",
               "ui-title-key": "alarm_severities.major"
             }
@@ -1189,6 +2520,9 @@
             "readOnly": true,
             "type": "integer",
             "x-eda-nokia-com": {
+              "i18n-keys": {
+                "title": "alarm_severities.minor"
+              },
               "ui-title": "minor",
               "ui-title-key": "alarm_severities.minor"
             }
@@ -1198,6 +2532,9 @@
             "readOnly": true,
             "type": "integer",
             "x-eda-nokia-com": {
+              "i18n-keys": {
+                "title": "alarm_severities.warning"
+              },
               "ui-title": "Warning",
               "ui-title-key": "alarm_severities.warning"
             }
@@ -1206,6 +2543,10 @@
         "readOnly": true,
         "type": "object",
         "x-eda-nokia-com": {
+          "i18n-keys": {
+            "group": "core.eda.nokia.com",
+            "title": "alarms"
+          },
           "ui-order-priority": 40,
           "ui-title": "Alarms",
           "ui-title-key": "alarms"
@@ -1218,6 +2559,9 @@
             "readOnly": true,
             "type": "integer",
             "x-eda-nokia-com": {
+              "i18n-keys": {
+                "title": "count_column"
+              },
               "ui-title": "Count",
               "ui-title-key": "count_column"
             }
@@ -1226,6 +2570,10 @@
         "readOnly": true,
         "type": "object",
         "x-eda-nokia-com": {
+          "i18n-keys": {
+            "group": "core.eda.nokia.com",
+            "title": "deviations"
+          },
           "ui-order-priority": 50,
           "ui-title": "Deviations",
           "ui-title-key": "deviations"
@@ -1239,6 +2587,9 @@
             },
             "type": "object",
             "x-eda-nokia-com": {
+              "i18n-keys": {
+                "title": "annotations"
+              },
               "ui-order-priority": 40,
               "ui-title": "Annotations",
               "ui-title-key": "annotations"
@@ -1250,6 +2601,9 @@
             },
             "type": "object",
             "x-eda-nokia-com": {
+              "i18n-keys": {
+                "title": "labels"
+              },
               "ui-auto-completes": [
                 {
                   "condition": "true",
@@ -1269,7 +2623,15 @@
             "pattern": "^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$",
             "type": "string",
             "x-eda-nokia-com": {
+              "i18n-keys": {
+                "title": "name"
+              },
               "immutable": true,
+              "key": {
+                "index": 2,
+                "is-mirror": true,
+                "is-name": true
+              },
               "ui-order-priority": 10,
               "ui-pattern-error": "A valid name is made up of one or more components where each component is separated by period characters.  Each component must start and end with a lower case alphanumeric character and the body of the component is made up of zero or more lower case alphanumeric and hyphen characters.",
               "ui-title": "Name",
@@ -1280,7 +2642,15 @@
             "default": "eda-system",
             "type": "string",
             "x-eda-nokia-com": {
+              "i18n-keys": {
+                "title": "namespace"
+              },
               "immutable": true,
+              "key": {
+                "index": 1,
+                "is-mirror": true,
+                "is-namespace": true
+              },
               "ui-order-priority": 20,
               "ui-title": "Namespace",
               "ui-title-key": "namespace",
@@ -1293,6 +2663,10 @@
         ],
         "type": "object",
         "x-eda-nokia-com": {
+          "i18n-keys": {
+            "group": "core.eda.nokia.com",
+            "title": "metadata"
+          },
           "ui-order-priority": 10,
           "ui-title": "Metadata",
           "ui-title-key": "metadata"
@@ -1336,10 +2710,53 @@
                 "items": {
                   "properties": {
                     "autocomplete": {
-                      "description": "Autocomplete string for the argument\nExample: '{\"group\":\"core.eda.nokia.com\", \"version\":\"v1\", \"resource\":\"namespaces\"}'",
+                      "description": "Autocomplete string for the argument\nExamples:\n- '{\"type\":\"gvr\", \"group\":\"core.eda.nokia.com\", \"version\":\"v1\", \"resource\":\"namespaces\"}'\n- '{\"type\":\"query\", \"table\":\".namespace.node.srl\", \"field\": \".namespace.node.name\", \"where\": \"version = \\\"26.3.1\\\"\"}'\n- '{\"type\":\"labelselector\", \"group\":\"core.eda.nokia.com\", \"kind\":\"TopoNode\"}'",
                       "title": "Autocomplete",
                       "type": "string",
                       "x-eda-nokia-com": {
+                        "i18n-keys": {
+                          "description": "crd.MCPResourceDefinition.spec.arguments._items.autocomplete._description",
+                          "title": "crd.MCPResourceDefinition.spec.arguments._items.autocomplete._title"
+                        },
+                        "ui-order-priority": 520
+                      }
+                    },
+                    "choices": {
+                      "description": "Choices for the argument",
+                      "items": {
+                        "type": "string"
+                      },
+                      "title": "Choices",
+                      "type": "array",
+                      "x-eda-nokia-com": {
+                        "i18n-keys": {
+                          "description": "crd.MCPResourceDefinition.spec.arguments._items.choices._description",
+                          "title": "crd.MCPResourceDefinition.spec.arguments._items.choices._title"
+                        },
+                        "ui-order-priority": 530
+                      }
+                    },
+                    "default": {
+                      "description": "Default value for the argument",
+                      "title": "Default",
+                      "type": "string",
+                      "x-eda-nokia-com": {
+                        "i18n-keys": {
+                          "description": "crd.MCPResourceDefinition.spec.arguments._items.default._description",
+                          "title": "crd.MCPResourceDefinition.spec.arguments._items.default._title"
+                        },
+                        "ui-order-priority": 540
+                      }
+                    },
+                    "description": {
+                      "description": "A brief description of the argument",
+                      "title": "Description",
+                      "type": "string",
+                      "x-eda-nokia-com": {
+                        "i18n-keys": {
+                          "description": "crd.MCPResourceDefinition.spec.arguments._items.description._description",
+                          "title": "crd.MCPResourceDefinition.spec.arguments._items.description._title"
+                        },
                         "ui-order-priority": 520
                       }
                     },
@@ -1348,6 +2765,10 @@
                       "title": "Name",
                       "type": "string",
                       "x-eda-nokia-com": {
+                        "i18n-keys": {
+                          "description": "crd.MCPResourceDefinition.spec.arguments._items.name._description",
+                          "title": "crd.MCPResourceDefinition.spec.arguments._items.name._title"
+                        },
                         "ui-order-priority": 510
                       }
                     }
@@ -1357,6 +2778,10 @@
                 "title": "Arguments",
                 "type": "array",
                 "x-eda-nokia-com": {
+                  "i18n-keys": {
+                    "description": "crd.MCPResourceDefinition.spec.arguments._description",
+                    "title": "crd.MCPResourceDefinition.spec.arguments._title"
+                  },
                   "ui-order-priority": 500
                 }
               },
@@ -1365,7 +2790,24 @@
                 "title": "Description",
                 "type": "string",
                 "x-eda-nokia-com": {
+                  "i18n-keys": {
+                    "description": "crd.MCPResourceDefinition.spec.description._description",
+                    "title": "crd.MCPResourceDefinition.spec.description._title"
+                  },
                   "ui-order-priority": 300
+                }
+              },
+              "enabled": {
+                "default": true,
+                "description": "Whether the resource definition is enabled",
+                "title": "Enabled",
+                "type": "boolean",
+                "x-eda-nokia-com": {
+                  "i18n-keys": {
+                    "description": "crd.MCPResourceDefinition.spec.enabled._description",
+                    "title": "crd.MCPResourceDefinition.spec.enabled._title"
+                  },
+                  "ui-order-priority": 50
                 }
               },
               "mimeType": {
@@ -1373,6 +2815,10 @@
                 "title": "MIME Type",
                 "type": "string",
                 "x-eda-nokia-com": {
+                  "i18n-keys": {
+                    "description": "crd.MCPResourceDefinition.spec.mimeType._description",
+                    "title": "crd.MCPResourceDefinition.spec.mimeType._title"
+                  },
                   "ui-order-priority": 400
                 }
               },
@@ -1391,6 +2837,10 @@
                               "title": "Name",
                               "type": "string",
                               "x-eda-nokia-com": {
+                                "i18n-keys": {
+                                  "description": "crd.MCPResourceDefinition.spec.provider.http.headers._items.name._description",
+                                  "title": "crd.MCPResourceDefinition.spec.provider.http.headers._items.name._title"
+                                },
                                 "ui-order-priority": 731
                               }
                             },
@@ -1399,6 +2849,10 @@
                               "title": "Value",
                               "type": "string",
                               "x-eda-nokia-com": {
+                                "i18n-keys": {
+                                  "description": "crd.MCPResourceDefinition.spec.provider.http.headers._items.value._description",
+                                  "title": "crd.MCPResourceDefinition.spec.provider.http.headers._items.value._title"
+                                },
                                 "ui-order-priority": 732
                               }
                             }
@@ -1408,6 +2862,10 @@
                         "title": "Headers",
                         "type": "array",
                         "x-eda-nokia-com": {
+                          "i18n-keys": {
+                            "description": "crd.MCPResourceDefinition.spec.provider.http.headers._description",
+                            "title": "crd.MCPResourceDefinition.spec.provider.http.headers._title"
+                          },
                           "ui-order-priority": 730
                         }
                       },
@@ -1416,6 +2874,10 @@
                         "title": "Include Authorization",
                         "type": "boolean",
                         "x-eda-nokia-com": {
+                          "i18n-keys": {
+                            "description": "crd.MCPResourceDefinition.spec.provider.http.includeEDAAuth._description",
+                            "title": "crd.MCPResourceDefinition.spec.provider.http.includeEDAAuth._title"
+                          },
                           "ui-order-priority": 760
                         }
                       },
@@ -1434,6 +2896,19 @@
                         "title": "Method",
                         "type": "string",
                         "x-eda-nokia-com": {
+                          "i18n-keys": {
+                            "description": "crd.MCPResourceDefinition.spec.provider.http.method._description",
+                            "enum": [
+                              "crd.MCPResourceDefinition.spec.provider.http.method._enum.GET",
+                              "crd.MCPResourceDefinition.spec.provider.http.method._enum.POST",
+                              "crd.MCPResourceDefinition.spec.provider.http.method._enum.PUT",
+                              "crd.MCPResourceDefinition.spec.provider.http.method._enum.DELETE",
+                              "crd.MCPResourceDefinition.spec.provider.http.method._enum.PATCH",
+                              "crd.MCPResourceDefinition.spec.provider.http.method._enum.OPTIONS",
+                              "crd.MCPResourceDefinition.spec.provider.http.method._enum.HEAD"
+                            ],
+                            "title": "crd.MCPResourceDefinition.spec.provider.http.method._title"
+                          },
                           "ui-order-priority": 720
                         }
                       },
@@ -1443,6 +2918,10 @@
                         "title": "Timeout",
                         "type": "integer",
                         "x-eda-nokia-com": {
+                          "i18n-keys": {
+                            "description": "crd.MCPResourceDefinition.spec.provider.http.timeoutSeconds._description",
+                            "title": "crd.MCPResourceDefinition.spec.provider.http.timeoutSeconds._title"
+                          },
                           "ui-order-priority": 740
                         }
                       },
@@ -1451,6 +2930,10 @@
                         "title": "Trust Bundle",
                         "type": "string",
                         "x-eda-nokia-com": {
+                          "i18n-keys": {
+                            "description": "crd.MCPResourceDefinition.spec.provider.http.trustBundle._description",
+                            "title": "crd.MCPResourceDefinition.spec.provider.http.trustBundle._title"
+                          },
                           "ui-order-priority": 750
                         }
                       },
@@ -1459,6 +2942,10 @@
                         "title": "URL",
                         "type": "string",
                         "x-eda-nokia-com": {
+                          "i18n-keys": {
+                            "description": "crd.MCPResourceDefinition.spec.provider.http.url._description",
+                            "title": "crd.MCPResourceDefinition.spec.provider.http.url._title"
+                          },
                           "ui-order-priority": 710
                         }
                       }
@@ -1466,6 +2953,10 @@
                     "title": "HTTP",
                     "type": "object",
                     "x-eda-nokia-com": {
+                      "i18n-keys": {
+                        "description": "crd.MCPResourceDefinition.spec.provider.http._description",
+                        "title": "crd.MCPResourceDefinition.spec.provider.http._title"
+                      },
                       "ui-order-priority": 700
                     }
                   },
@@ -1477,6 +2968,10 @@
                         "title": "Expression",
                         "type": "string",
                         "x-eda-nokia-com": {
+                          "i18n-keys": {
+                            "description": "crd.MCPResourceDefinition.spec.provider.query.expression._description",
+                            "title": "crd.MCPResourceDefinition.spec.provider.query.expression._title"
+                          },
                           "ui-order-priority": 630
                         }
                       }
@@ -1484,6 +2979,10 @@
                     "title": "Query",
                     "type": "object",
                     "x-eda-nokia-com": {
+                      "i18n-keys": {
+                        "description": "crd.MCPResourceDefinition.spec.provider.query._description",
+                        "title": "crd.MCPResourceDefinition.spec.provider.query._title"
+                      },
                       "ui-order-priority": 620
                     }
                   },
@@ -1495,6 +2994,10 @@
                         "title": "Content",
                         "type": "string",
                         "x-eda-nokia-com": {
+                          "i18n-keys": {
+                            "description": "crd.MCPResourceDefinition.spec.provider.static.content._description",
+                            "title": "crd.MCPResourceDefinition.spec.provider.static.content._title"
+                          },
                           "ui-order-priority": 611
                         }
                       }
@@ -1502,6 +3005,10 @@
                     "title": "Static",
                     "type": "object",
                     "x-eda-nokia-com": {
+                      "i18n-keys": {
+                        "description": "crd.MCPResourceDefinition.spec.provider.static._description",
+                        "title": "crd.MCPResourceDefinition.spec.provider.static._title"
+                      },
                       "ui-order-priority": 610
                     }
                   }
@@ -1509,6 +3016,10 @@
                 "title": "Provider",
                 "type": "object",
                 "x-eda-nokia-com": {
+                  "i18n-keys": {
+                    "description": "crd.MCPResourceDefinition.spec.provider._description",
+                    "title": "crd.MCPResourceDefinition.spec.provider._title"
+                  },
                   "ui-order-priority": 600
                 }
               },
@@ -1517,6 +3028,10 @@
                 "title": "Title",
                 "type": "string",
                 "x-eda-nokia-com": {
+                  "i18n-keys": {
+                    "description": "crd.MCPResourceDefinition.spec.title._description",
+                    "title": "crd.MCPResourceDefinition.spec.title._title"
+                  },
                   "ui-order-priority": 100
                 }
               },
@@ -1525,6 +3040,10 @@
                 "title": "URI Template",
                 "type": "string",
                 "x-eda-nokia-com": {
+                  "i18n-keys": {
+                    "description": "crd.MCPResourceDefinition.spec.uriTemplate._description",
+                    "title": "crd.MCPResourceDefinition.spec.uriTemplate._title"
+                  },
                   "ui-order-priority": 200
                 }
               }
@@ -1537,10 +3056,17 @@
             "title": "Specification",
             "type": "object",
             "x-eda-nokia-com": {
+              "i18n-keys": {
+                "description": "crd.MCPResourceDefinition.spec._description",
+                "title": "crd.MCPResourceDefinition.spec._title"
+              },
               "ui-conditions": [
                 {
                   "condition": "(isSet(\"spec.provider.static\") \u0026\u0026 !isSet(\"spec.provider.query\") \u0026\u0026 !isSet(\"spec.provider.http\")) || (isSet(\"spec.provider.query\") \u0026\u0026 !isSet(\"spec.provider.http\") \u0026\u0026 !isSet(\"spec.provider.static\")) || (isSet(\"spec.provider.http\") \u0026\u0026 !isSet(\"spec.provider.query\") \u0026\u0026 !isSet(\"spec.provider.static\"))",
-                  "errorMsg": "Exactly one provider (static, query or http) must be set."
+                  "errorMsg": "Exactly one provider (static, query or http) must be set.",
+                  "i18n-keys": {
+                    "errorMsg": "crd.MCPResourceDefinition.spec._conditions._errorMsg.Exactly one provider (static, query or http) must be set."
+                  }
                 }
               ],
               "ui-order-priority": 30
@@ -1552,6 +3078,10 @@
             "title": "Status",
             "type": "object",
             "x-eda-nokia-com": {
+              "i18n-keys": {
+                "description": "crd.MCPResourceDefinition.status._description",
+                "title": "crd.MCPResourceDefinition.status._title"
+              },
               "ui-order-priority": 20
             }
           }
@@ -1562,7 +3092,13 @@
           "metadata",
           "spec"
         ],
-        "type": "object"
+        "type": "object",
+        "x-eda-nokia-com": {
+          "i18n-keys": {
+            "description": "crd.MCPResourceDefinition._description",
+            "group": "ai.core.eda.nokia.com"
+          }
+        }
       },
       "com.nokia.eda.core.ai.v1.MCPResourceDefinitionList": {
         "description": "MCPResourceDefinitionList is a list of mcpresourcedefinitions",
@@ -1592,6 +3128,10 @@
             "format": "date-time",
             "type": "string",
             "x-eda-nokia-com": {
+              "i18n-keys": {
+                "group": "core.eda.nokia.com",
+                "title": "commitTime"
+              },
               "ui-order-priority": 50,
               "ui-title": "Commit Time",
               "ui-title-key": "commitTime"
@@ -1600,6 +3140,10 @@
           "hash": {
             "type": "string",
             "x-eda-nokia-com": {
+              "i18n-keys": {
+                "group": "core.eda.nokia.com",
+                "title": "commitHash"
+              },
               "ui-order-priority": 40,
               "ui-title": "Commit Hash",
               "ui-title-key": "commitHash"
@@ -1608,6 +3152,14 @@
           "name": {
             "type": "string",
             "x-eda-nokia-com": {
+              "i18n-keys": {
+                "group": "core.eda.nokia.com",
+                "title": "name"
+              },
+              "key": {
+                "index": 2,
+                "is-name": true
+              },
               "ui-order-priority": 10,
               "ui-title": "Name",
               "ui-title-key": "name"
@@ -1616,6 +3168,14 @@
           "namespace": {
             "type": "string",
             "x-eda-nokia-com": {
+              "i18n-keys": {
+                "group": "core.eda.nokia.com",
+                "title": "namespace"
+              },
+              "key": {
+                "index": 1,
+                "is-namespace": true
+              },
               "ui-order-priority": 20,
               "ui-title": "Namespace",
               "ui-title-key": "namespace"
@@ -1625,6 +3185,10 @@
             "format": "uint64",
             "type": "integer",
             "x-eda-nokia-com": {
+              "i18n-keys": {
+                "group": "core.eda.nokia.com",
+                "title": "transactionId"
+              },
               "ui-order-priority": 30,
               "ui-title": "Transaction ID",
               "ui-title-key": "transactionId"
@@ -1646,6 +3210,9 @@
             "readOnly": true,
             "type": "integer",
             "x-eda-nokia-com": {
+              "i18n-keys": {
+                "title": "alarm_severities.critical"
+              },
               "ui-title": "Critical",
               "ui-title-key": "alarm_severities.critical"
             }
@@ -1655,6 +3222,9 @@
             "readOnly": true,
             "type": "integer",
             "x-eda-nokia-com": {
+              "i18n-keys": {
+                "title": "alarm_severities.major"
+              },
               "ui-title": "Major",
               "ui-title-key": "alarm_severities.major"
             }
@@ -1664,6 +3234,9 @@
             "readOnly": true,
             "type": "integer",
             "x-eda-nokia-com": {
+              "i18n-keys": {
+                "title": "alarm_severities.minor"
+              },
               "ui-title": "minor",
               "ui-title-key": "alarm_severities.minor"
             }
@@ -1673,6 +3246,9 @@
             "readOnly": true,
             "type": "integer",
             "x-eda-nokia-com": {
+              "i18n-keys": {
+                "title": "alarm_severities.warning"
+              },
               "ui-title": "Warning",
               "ui-title-key": "alarm_severities.warning"
             }
@@ -1681,6 +3257,10 @@
         "readOnly": true,
         "type": "object",
         "x-eda-nokia-com": {
+          "i18n-keys": {
+            "group": "core.eda.nokia.com",
+            "title": "alarms"
+          },
           "ui-order-priority": 40,
           "ui-title": "Alarms",
           "ui-title-key": "alarms"
@@ -1693,6 +3273,9 @@
             "readOnly": true,
             "type": "integer",
             "x-eda-nokia-com": {
+              "i18n-keys": {
+                "title": "count_column"
+              },
               "ui-title": "Count",
               "ui-title-key": "count_column"
             }
@@ -1701,6 +3284,10 @@
         "readOnly": true,
         "type": "object",
         "x-eda-nokia-com": {
+          "i18n-keys": {
+            "group": "core.eda.nokia.com",
+            "title": "deviations"
+          },
           "ui-order-priority": 50,
           "ui-title": "Deviations",
           "ui-title-key": "deviations"
@@ -1714,6 +3301,9 @@
             },
             "type": "object",
             "x-eda-nokia-com": {
+              "i18n-keys": {
+                "title": "annotations"
+              },
               "ui-order-priority": 40,
               "ui-title": "Annotations",
               "ui-title-key": "annotations"
@@ -1725,6 +3315,9 @@
             },
             "type": "object",
             "x-eda-nokia-com": {
+              "i18n-keys": {
+                "title": "labels"
+              },
               "ui-auto-completes": [
                 {
                   "condition": "true",
@@ -1744,7 +3337,15 @@
             "pattern": "^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$",
             "type": "string",
             "x-eda-nokia-com": {
+              "i18n-keys": {
+                "title": "name"
+              },
               "immutable": true,
+              "key": {
+                "index": 2,
+                "is-mirror": true,
+                "is-name": true
+              },
               "ui-order-priority": 10,
               "ui-pattern-error": "A valid name is made up of one or more components where each component is separated by period characters.  Each component must start and end with a lower case alphanumeric character and the body of the component is made up of zero or more lower case alphanumeric and hyphen characters.",
               "ui-title": "Name",
@@ -1755,7 +3356,15 @@
             "default": "eda-system",
             "type": "string",
             "x-eda-nokia-com": {
+              "i18n-keys": {
+                "title": "namespace"
+              },
               "immutable": true,
+              "key": {
+                "index": 1,
+                "is-mirror": true,
+                "is-namespace": true
+              },
               "ui-order-priority": 20,
               "ui-title": "Namespace",
               "ui-title-key": "namespace",
@@ -1768,6 +3377,10 @@
         ],
         "type": "object",
         "x-eda-nokia-com": {
+          "i18n-keys": {
+            "group": "core.eda.nokia.com",
+            "title": "metadata"
+          },
           "ui-order-priority": 10,
           "ui-title": "Metadata",
           "ui-title-key": "metadata"
@@ -1815,6 +3428,10 @@
                     "title": "Enable Completions",
                     "type": "boolean",
                     "x-eda-nokia-com": {
+                      "i18n-keys": {
+                        "description": "crd.MCPSettings.spec.capabilities.enableCompletions._description",
+                        "title": "crd.MCPSettings.spec.capabilities.enableCompletions._title"
+                      },
                       "ui-order-priority": 300
                     }
                   },
@@ -1824,6 +3441,10 @@
                     "title": "Enable Logging",
                     "type": "boolean",
                     "x-eda-nokia-com": {
+                      "i18n-keys": {
+                        "description": "crd.MCPSettings.spec.capabilities.enableLogging._description",
+                        "title": "crd.MCPSettings.spec.capabilities.enableLogging._title"
+                      },
                       "ui-order-priority": 300
                     }
                   },
@@ -1833,6 +3454,10 @@
                     "title": "Prompt List Changed Notifications",
                     "type": "boolean",
                     "x-eda-nokia-com": {
+                      "i18n-keys": {
+                        "description": "crd.MCPSettings.spec.capabilities.promptListChangedNotifications._description",
+                        "title": "crd.MCPSettings.spec.capabilities.promptListChangedNotifications._title"
+                      },
                       "ui-column-span": 3,
                       "ui-order-priority": 200,
                       "ui-single-line-group": "Notifications"
@@ -1844,6 +3469,10 @@
                     "title": "Resource List Changed Notifications",
                     "type": "boolean",
                     "x-eda-nokia-com": {
+                      "i18n-keys": {
+                        "description": "crd.MCPSettings.spec.capabilities.resourceListChangedNotifications._description",
+                        "title": "crd.MCPSettings.spec.capabilities.resourceListChangedNotifications._title"
+                      },
                       "ui-column-span": 3,
                       "ui-order-priority": 200,
                       "ui-single-line-group": "Notifications"
@@ -1855,6 +3484,10 @@
                     "title": "Resource Subscribe Support",
                     "type": "boolean",
                     "x-eda-nokia-com": {
+                      "i18n-keys": {
+                        "description": "crd.MCPSettings.spec.capabilities.resourceSubscribeSupport._description",
+                        "title": "crd.MCPSettings.spec.capabilities.resourceSubscribeSupport._title"
+                      },
                       "ui-order-priority": 300
                     }
                   },
@@ -1864,6 +3497,10 @@
                     "title": "Tool List Changed Notifications",
                     "type": "boolean",
                     "x-eda-nokia-com": {
+                      "i18n-keys": {
+                        "description": "crd.MCPSettings.spec.capabilities.toolListChangedNotifications._description",
+                        "title": "crd.MCPSettings.spec.capabilities.toolListChangedNotifications._title"
+                      },
                       "ui-column-span": 3,
                       "ui-order-priority": 200,
                       "ui-single-line-group": "Notifications"
@@ -1873,6 +3510,10 @@
                 "title": "Capabilities",
                 "type": "object",
                 "x-eda-nokia-com": {
+                  "i18n-keys": {
+                    "description": "crd.MCPSettings.spec.capabilities._description",
+                    "title": "crd.MCPSettings.spec.capabilities._title"
+                  },
                   "ui-order-priority": 110
                 }
               },
@@ -1882,13 +3523,33 @@
                 "title": "Enabled",
                 "type": "boolean",
                 "x-eda-nokia-com": {
+                  "i18n-keys": {
+                    "description": "crd.MCPSettings.spec.enabled._description",
+                    "title": "crd.MCPSettings.spec.enabled._title"
+                  },
                   "ui-order-priority": 100
+                }
+              },
+              "instructions": {
+                "description": "MCP Server Instructions",
+                "title": "Instructions",
+                "type": "string",
+                "x-eda-nokia-com": {
+                  "i18n-keys": {
+                    "description": "crd.MCPSettings.spec.instructions._description",
+                    "title": "crd.MCPSettings.spec.instructions._title"
+                  },
+                  "ui-order-priority": 120
                 }
               }
             },
             "title": "Specification",
             "type": "object",
             "x-eda-nokia-com": {
+              "i18n-keys": {
+                "description": "crd.MCPSettings.spec._description",
+                "title": "crd.MCPSettings.spec._title"
+              },
               "ui-order-priority": 30
             }
           },
@@ -1898,6 +3559,10 @@
             "title": "Status",
             "type": "object",
             "x-eda-nokia-com": {
+              "i18n-keys": {
+                "description": "crd.MCPSettings.status._description",
+                "title": "crd.MCPSettings.status._title"
+              },
               "ui-order-priority": 20
             }
           }
@@ -1908,7 +3573,13 @@
           "metadata",
           "spec"
         ],
-        "type": "object"
+        "type": "object",
+        "x-eda-nokia-com": {
+          "i18n-keys": {
+            "description": "crd.MCPSettings._description",
+            "group": "ai.core.eda.nokia.com"
+          }
+        }
       },
       "com.nokia.eda.core.ai.v1.MCPSettingsList": {
         "description": "MCPSettingsList is a list of mcpsettings",
@@ -1938,6 +3609,10 @@
             "format": "date-time",
             "type": "string",
             "x-eda-nokia-com": {
+              "i18n-keys": {
+                "group": "core.eda.nokia.com",
+                "title": "commitTime"
+              },
               "ui-order-priority": 50,
               "ui-title": "Commit Time",
               "ui-title-key": "commitTime"
@@ -1946,6 +3621,10 @@
           "hash": {
             "type": "string",
             "x-eda-nokia-com": {
+              "i18n-keys": {
+                "group": "core.eda.nokia.com",
+                "title": "commitHash"
+              },
               "ui-order-priority": 40,
               "ui-title": "Commit Hash",
               "ui-title-key": "commitHash"
@@ -1954,6 +3633,14 @@
           "name": {
             "type": "string",
             "x-eda-nokia-com": {
+              "i18n-keys": {
+                "group": "core.eda.nokia.com",
+                "title": "name"
+              },
+              "key": {
+                "index": 2,
+                "is-name": true
+              },
               "ui-order-priority": 10,
               "ui-title": "Name",
               "ui-title-key": "name"
@@ -1962,6 +3649,14 @@
           "namespace": {
             "type": "string",
             "x-eda-nokia-com": {
+              "i18n-keys": {
+                "group": "core.eda.nokia.com",
+                "title": "namespace"
+              },
+              "key": {
+                "index": 1,
+                "is-namespace": true
+              },
               "ui-order-priority": 20,
               "ui-title": "Namespace",
               "ui-title-key": "namespace"
@@ -1971,6 +3666,10 @@
             "format": "uint64",
             "type": "integer",
             "x-eda-nokia-com": {
+              "i18n-keys": {
+                "group": "core.eda.nokia.com",
+                "title": "transactionId"
+              },
               "ui-order-priority": 30,
               "ui-title": "Transaction ID",
               "ui-title-key": "transactionId"
@@ -1992,6 +3691,9 @@
             "readOnly": true,
             "type": "integer",
             "x-eda-nokia-com": {
+              "i18n-keys": {
+                "title": "alarm_severities.critical"
+              },
               "ui-title": "Critical",
               "ui-title-key": "alarm_severities.critical"
             }
@@ -2001,6 +3703,9 @@
             "readOnly": true,
             "type": "integer",
             "x-eda-nokia-com": {
+              "i18n-keys": {
+                "title": "alarm_severities.major"
+              },
               "ui-title": "Major",
               "ui-title-key": "alarm_severities.major"
             }
@@ -2010,6 +3715,9 @@
             "readOnly": true,
             "type": "integer",
             "x-eda-nokia-com": {
+              "i18n-keys": {
+                "title": "alarm_severities.minor"
+              },
               "ui-title": "minor",
               "ui-title-key": "alarm_severities.minor"
             }
@@ -2019,6 +3727,9 @@
             "readOnly": true,
             "type": "integer",
             "x-eda-nokia-com": {
+              "i18n-keys": {
+                "title": "alarm_severities.warning"
+              },
               "ui-title": "Warning",
               "ui-title-key": "alarm_severities.warning"
             }
@@ -2027,6 +3738,10 @@
         "readOnly": true,
         "type": "object",
         "x-eda-nokia-com": {
+          "i18n-keys": {
+            "group": "core.eda.nokia.com",
+            "title": "alarms"
+          },
           "ui-order-priority": 40,
           "ui-title": "Alarms",
           "ui-title-key": "alarms"
@@ -2039,6 +3754,9 @@
             "readOnly": true,
             "type": "integer",
             "x-eda-nokia-com": {
+              "i18n-keys": {
+                "title": "count_column"
+              },
               "ui-title": "Count",
               "ui-title-key": "count_column"
             }
@@ -2047,6 +3765,10 @@
         "readOnly": true,
         "type": "object",
         "x-eda-nokia-com": {
+          "i18n-keys": {
+            "group": "core.eda.nokia.com",
+            "title": "deviations"
+          },
           "ui-order-priority": 50,
           "ui-title": "Deviations",
           "ui-title-key": "deviations"
@@ -2060,6 +3782,9 @@
             },
             "type": "object",
             "x-eda-nokia-com": {
+              "i18n-keys": {
+                "title": "annotations"
+              },
               "ui-order-priority": 40,
               "ui-title": "Annotations",
               "ui-title-key": "annotations"
@@ -2071,6 +3796,9 @@
             },
             "type": "object",
             "x-eda-nokia-com": {
+              "i18n-keys": {
+                "title": "labels"
+              },
               "ui-auto-completes": [
                 {
                   "condition": "true",
@@ -2090,7 +3818,15 @@
             "pattern": "^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$",
             "type": "string",
             "x-eda-nokia-com": {
+              "i18n-keys": {
+                "title": "name"
+              },
               "immutable": true,
+              "key": {
+                "index": 2,
+                "is-mirror": true,
+                "is-name": true
+              },
               "ui-order-priority": 10,
               "ui-pattern-error": "A valid name is made up of one or more components where each component is separated by period characters.  Each component must start and end with a lower case alphanumeric character and the body of the component is made up of zero or more lower case alphanumeric and hyphen characters.",
               "ui-title": "Name",
@@ -2101,7 +3837,15 @@
             "default": "eda-system",
             "type": "string",
             "x-eda-nokia-com": {
+              "i18n-keys": {
+                "title": "namespace"
+              },
               "immutable": true,
+              "key": {
+                "index": 1,
+                "is-mirror": true,
+                "is-namespace": true
+              },
               "ui-order-priority": 20,
               "ui-title": "Namespace",
               "ui-title-key": "namespace",
@@ -2114,6 +3858,10 @@
         ],
         "type": "object",
         "x-eda-nokia-com": {
+          "i18n-keys": {
+            "group": "core.eda.nokia.com",
+            "title": "metadata"
+          },
           "ui-order-priority": 10,
           "ui-title": "Metadata",
           "ui-title-key": "metadata"
@@ -2157,7 +3905,24 @@
                 "title": "Description",
                 "type": "string",
                 "x-eda-nokia-com": {
+                  "i18n-keys": {
+                    "description": "crd.MCPToolDefinition.spec.description._description",
+                    "title": "crd.MCPToolDefinition.spec.description._title"
+                  },
                   "ui-order-priority": 200
+                }
+              },
+              "enabled": {
+                "default": true,
+                "description": "Whether the tool definition is enabled",
+                "title": "Enabled",
+                "type": "boolean",
+                "x-eda-nokia-com": {
+                  "i18n-keys": {
+                    "description": "crd.MCPToolDefinition.spec.enabled._description",
+                    "title": "crd.MCPToolDefinition.spec.enabled._title"
+                  },
+                  "ui-order-priority": 50
                 }
               },
               "inputSchema": {
@@ -2165,6 +3930,10 @@
                 "title": "Input Schema",
                 "type": "string",
                 "x-eda-nokia-com": {
+                  "i18n-keys": {
+                    "description": "crd.MCPToolDefinition.spec.inputSchema._description",
+                    "title": "crd.MCPToolDefinition.spec.inputSchema._title"
+                  },
                   "ui-order-priority": 300
                 }
               },
@@ -2173,6 +3942,10 @@
                 "title": "Output Schema",
                 "type": "string",
                 "x-eda-nokia-com": {
+                  "i18n-keys": {
+                    "description": "crd.MCPToolDefinition.spec.outputSchema._description",
+                    "title": "crd.MCPToolDefinition.spec.outputSchema._title"
+                  },
                   "ui-order-priority": 400
                 }
               },
@@ -2191,6 +3964,10 @@
                               "title": "Name",
                               "type": "string",
                               "x-eda-nokia-com": {
+                                "i18n-keys": {
+                                  "description": "crd.MCPToolDefinition.spec.provider.http.headers._items.name._description",
+                                  "title": "crd.MCPToolDefinition.spec.provider.http.headers._items.name._title"
+                                },
                                 "ui-order-priority": 731
                               }
                             },
@@ -2199,6 +3976,10 @@
                               "title": "Value",
                               "type": "string",
                               "x-eda-nokia-com": {
+                                "i18n-keys": {
+                                  "description": "crd.MCPToolDefinition.spec.provider.http.headers._items.value._description",
+                                  "title": "crd.MCPToolDefinition.spec.provider.http.headers._items.value._title"
+                                },
                                 "ui-order-priority": 732
                               }
                             }
@@ -2208,6 +3989,10 @@
                         "title": "Headers",
                         "type": "array",
                         "x-eda-nokia-com": {
+                          "i18n-keys": {
+                            "description": "crd.MCPToolDefinition.spec.provider.http.headers._description",
+                            "title": "crd.MCPToolDefinition.spec.provider.http.headers._title"
+                          },
                           "ui-order-priority": 730
                         }
                       },
@@ -2216,6 +4001,10 @@
                         "title": "Include Authorization",
                         "type": "boolean",
                         "x-eda-nokia-com": {
+                          "i18n-keys": {
+                            "description": "crd.MCPToolDefinition.spec.provider.http.includeEDAAuth._description",
+                            "title": "crd.MCPToolDefinition.spec.provider.http.includeEDAAuth._title"
+                          },
                           "ui-order-priority": 760
                         }
                       },
@@ -2234,6 +4023,19 @@
                         "title": "Method",
                         "type": "string",
                         "x-eda-nokia-com": {
+                          "i18n-keys": {
+                            "description": "crd.MCPToolDefinition.spec.provider.http.method._description",
+                            "enum": [
+                              "crd.MCPToolDefinition.spec.provider.http.method._enum.GET",
+                              "crd.MCPToolDefinition.spec.provider.http.method._enum.POST",
+                              "crd.MCPToolDefinition.spec.provider.http.method._enum.PUT",
+                              "crd.MCPToolDefinition.spec.provider.http.method._enum.DELETE",
+                              "crd.MCPToolDefinition.spec.provider.http.method._enum.PATCH",
+                              "crd.MCPToolDefinition.spec.provider.http.method._enum.OPTIONS",
+                              "crd.MCPToolDefinition.spec.provider.http.method._enum.HEAD"
+                            ],
+                            "title": "crd.MCPToolDefinition.spec.provider.http.method._title"
+                          },
                           "ui-order-priority": 720
                         }
                       },
@@ -2243,6 +4045,10 @@
                         "title": "Timeout",
                         "type": "integer",
                         "x-eda-nokia-com": {
+                          "i18n-keys": {
+                            "description": "crd.MCPToolDefinition.spec.provider.http.timeoutSeconds._description",
+                            "title": "crd.MCPToolDefinition.spec.provider.http.timeoutSeconds._title"
+                          },
                           "ui-order-priority": 740
                         }
                       },
@@ -2251,6 +4057,10 @@
                         "title": "Trust Bundle",
                         "type": "string",
                         "x-eda-nokia-com": {
+                          "i18n-keys": {
+                            "description": "crd.MCPToolDefinition.spec.provider.http.trustBundle._description",
+                            "title": "crd.MCPToolDefinition.spec.provider.http.trustBundle._title"
+                          },
                           "ui-order-priority": 750
                         }
                       },
@@ -2259,13 +4069,36 @@
                         "title": "URL",
                         "type": "string",
                         "x-eda-nokia-com": {
+                          "i18n-keys": {
+                            "description": "crd.MCPToolDefinition.spec.provider.http.url._description",
+                            "title": "crd.MCPToolDefinition.spec.provider.http.url._title"
+                          },
                           "ui-order-priority": 710
+                        }
+                      },
+                      "urlParamsRetainedInBody": {
+                        "description": "URL template parameters that should also be retained in the request body.\nBy default, any parameter referenced by the URL template (e.g. /{{namespace}})\nis removed from the forwarded body. List parameter names here to keep them\nin the body as well. This is useful for APIs that expect the same value in both\nthe URL path and the body.",
+                        "items": {
+                          "type": "string"
+                        },
+                        "title": "URL Params Retained In Body",
+                        "type": "array",
+                        "x-eda-nokia-com": {
+                          "i18n-keys": {
+                            "description": "crd.MCPToolDefinition.spec.provider.http.urlParamsRetainedInBody._description",
+                            "title": "crd.MCPToolDefinition.spec.provider.http.urlParamsRetainedInBody._title"
+                          },
+                          "ui-order-priority": 770
                         }
                       }
                     },
                     "title": "HTTP",
                     "type": "object",
                     "x-eda-nokia-com": {
+                      "i18n-keys": {
+                        "description": "crd.MCPToolDefinition.spec.provider.http._description",
+                        "title": "crd.MCPToolDefinition.spec.provider.http._title"
+                      },
                       "ui-order-priority": 530
                     }
                   },
@@ -2277,6 +4110,10 @@
                         "title": "Expression",
                         "type": "string",
                         "x-eda-nokia-com": {
+                          "i18n-keys": {
+                            "description": "crd.MCPToolDefinition.spec.provider.query.expression._description",
+                            "title": "crd.MCPToolDefinition.spec.provider.query.expression._title"
+                          },
                           "ui-order-priority": 630
                         }
                       }
@@ -2284,6 +4121,10 @@
                     "title": "Query",
                     "type": "object",
                     "x-eda-nokia-com": {
+                      "i18n-keys": {
+                        "description": "crd.MCPToolDefinition.spec.provider.query._description",
+                        "title": "crd.MCPToolDefinition.spec.provider.query._title"
+                      },
                       "ui-order-priority": 520
                     }
                   },
@@ -2292,6 +4133,10 @@
                     "title": "Workflow Reference",
                     "type": "string",
                     "x-eda-nokia-com": {
+                      "i18n-keys": {
+                        "description": "crd.MCPToolDefinition.spec.provider.workflowRef._description",
+                        "title": "crd.MCPToolDefinition.spec.provider.workflowRef._title"
+                      },
                       "ui-order-priority": 510
                     }
                   }
@@ -2299,6 +4144,10 @@
                 "title": "Provider",
                 "type": "object",
                 "x-eda-nokia-com": {
+                  "i18n-keys": {
+                    "description": "crd.MCPToolDefinition.spec.provider._description",
+                    "title": "crd.MCPToolDefinition.spec.provider._title"
+                  },
                   "ui-order-priority": 500
                 }
               },
@@ -2307,6 +4156,10 @@
                 "title": "Title",
                 "type": "string",
                 "x-eda-nokia-com": {
+                  "i18n-keys": {
+                    "description": "crd.MCPToolDefinition.spec.title._description",
+                    "title": "crd.MCPToolDefinition.spec.title._title"
+                  },
                   "ui-order-priority": 100
                 }
               }
@@ -2318,10 +4171,17 @@
             "title": "Specification",
             "type": "object",
             "x-eda-nokia-com": {
+              "i18n-keys": {
+                "description": "crd.MCPToolDefinition.spec._description",
+                "title": "crd.MCPToolDefinition.spec._title"
+              },
               "ui-conditions": [
                 {
                   "condition": "(isSet(\"spec.provider.workflowRef\") \u0026\u0026 !isSet(\"spec.provider.query\") \u0026\u0026 !isSet(\"spec.provider.http\")) || (isSet(\"spec.provider.query\") \u0026\u0026 !isSet(\"spec.provider.http\") \u0026\u0026 !isSet(\"spec.provider.workflowRef\")) || (isSet(\"spec.provider.http\") \u0026\u0026 !isSet(\"spec.provider.query\") \u0026\u0026 !isSet(\"spec.provider.workflowRef\"))",
-                  "errorMsg": "Exactly one provider (workflowRef, query or http) must be set."
+                  "errorMsg": "Exactly one provider (workflowRef, query or http) must be set.",
+                  "i18n-keys": {
+                    "errorMsg": "crd.MCPToolDefinition.spec._conditions._errorMsg.Exactly one provider (workflowRef, query or http) must be set."
+                  }
                 }
               ],
               "ui-order-priority": 30
@@ -2333,6 +4193,10 @@
             "title": "Status",
             "type": "object",
             "x-eda-nokia-com": {
+              "i18n-keys": {
+                "description": "crd.MCPToolDefinition.status._description",
+                "title": "crd.MCPToolDefinition.status._title"
+              },
               "ui-order-priority": 20
             }
           }
@@ -2343,7 +4207,13 @@
           "metadata",
           "spec"
         ],
-        "type": "object"
+        "type": "object",
+        "x-eda-nokia-com": {
+          "i18n-keys": {
+            "description": "crd.MCPToolDefinition._description",
+            "group": "ai.core.eda.nokia.com"
+          }
+        }
       },
       "com.nokia.eda.core.ai.v1.MCPToolDefinitionList": {
         "description": "MCPToolDefinitionList is a list of mcptooldefinitions",
@@ -2373,6 +4243,10 @@
             "format": "date-time",
             "type": "string",
             "x-eda-nokia-com": {
+              "i18n-keys": {
+                "group": "core.eda.nokia.com",
+                "title": "commitTime"
+              },
               "ui-order-priority": 50,
               "ui-title": "Commit Time",
               "ui-title-key": "commitTime"
@@ -2381,6 +4255,10 @@
           "hash": {
             "type": "string",
             "x-eda-nokia-com": {
+              "i18n-keys": {
+                "group": "core.eda.nokia.com",
+                "title": "commitHash"
+              },
               "ui-order-priority": 40,
               "ui-title": "Commit Hash",
               "ui-title-key": "commitHash"
@@ -2389,6 +4267,14 @@
           "name": {
             "type": "string",
             "x-eda-nokia-com": {
+              "i18n-keys": {
+                "group": "core.eda.nokia.com",
+                "title": "name"
+              },
+              "key": {
+                "index": 2,
+                "is-name": true
+              },
               "ui-order-priority": 10,
               "ui-title": "Name",
               "ui-title-key": "name"
@@ -2397,6 +4283,14 @@
           "namespace": {
             "type": "string",
             "x-eda-nokia-com": {
+              "i18n-keys": {
+                "group": "core.eda.nokia.com",
+                "title": "namespace"
+              },
+              "key": {
+                "index": 1,
+                "is-namespace": true
+              },
               "ui-order-priority": 20,
               "ui-title": "Namespace",
               "ui-title-key": "namespace"
@@ -2406,6 +4300,10 @@
             "format": "uint64",
             "type": "integer",
             "x-eda-nokia-com": {
+              "i18n-keys": {
+                "group": "core.eda.nokia.com",
+                "title": "transactionId"
+              },
               "ui-order-priority": 30,
               "ui-title": "Transaction ID",
               "ui-title-key": "transactionId"
@@ -2427,6 +4325,9 @@
             "readOnly": true,
             "type": "integer",
             "x-eda-nokia-com": {
+              "i18n-keys": {
+                "title": "alarm_severities.critical"
+              },
               "ui-title": "Critical",
               "ui-title-key": "alarm_severities.critical"
             }
@@ -2436,6 +4337,9 @@
             "readOnly": true,
             "type": "integer",
             "x-eda-nokia-com": {
+              "i18n-keys": {
+                "title": "alarm_severities.major"
+              },
               "ui-title": "Major",
               "ui-title-key": "alarm_severities.major"
             }
@@ -2445,6 +4349,9 @@
             "readOnly": true,
             "type": "integer",
             "x-eda-nokia-com": {
+              "i18n-keys": {
+                "title": "alarm_severities.minor"
+              },
               "ui-title": "minor",
               "ui-title-key": "alarm_severities.minor"
             }
@@ -2454,6 +4361,9 @@
             "readOnly": true,
             "type": "integer",
             "x-eda-nokia-com": {
+              "i18n-keys": {
+                "title": "alarm_severities.warning"
+              },
               "ui-title": "Warning",
               "ui-title-key": "alarm_severities.warning"
             }
@@ -2462,6 +4372,10 @@
         "readOnly": true,
         "type": "object",
         "x-eda-nokia-com": {
+          "i18n-keys": {
+            "group": "core.eda.nokia.com",
+            "title": "alarms"
+          },
           "ui-order-priority": 40,
           "ui-title": "Alarms",
           "ui-title-key": "alarms"
@@ -2474,6 +4388,9 @@
             "readOnly": true,
             "type": "integer",
             "x-eda-nokia-com": {
+              "i18n-keys": {
+                "title": "count_column"
+              },
               "ui-title": "Count",
               "ui-title-key": "count_column"
             }
@@ -2482,6 +4399,10 @@
         "readOnly": true,
         "type": "object",
         "x-eda-nokia-com": {
+          "i18n-keys": {
+            "group": "core.eda.nokia.com",
+            "title": "deviations"
+          },
           "ui-order-priority": 50,
           "ui-title": "Deviations",
           "ui-title-key": "deviations"
@@ -2495,6 +4416,9 @@
             },
             "type": "object",
             "x-eda-nokia-com": {
+              "i18n-keys": {
+                "title": "annotations"
+              },
               "ui-order-priority": 40,
               "ui-title": "Annotations",
               "ui-title-key": "annotations"
@@ -2506,6 +4430,9 @@
             },
             "type": "object",
             "x-eda-nokia-com": {
+              "i18n-keys": {
+                "title": "labels"
+              },
               "ui-auto-completes": [
                 {
                   "condition": "true",
@@ -2525,7 +4452,15 @@
             "pattern": "^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$",
             "type": "string",
             "x-eda-nokia-com": {
+              "i18n-keys": {
+                "title": "name"
+              },
               "immutable": true,
+              "key": {
+                "index": 2,
+                "is-mirror": true,
+                "is-name": true
+              },
               "ui-order-priority": 10,
               "ui-pattern-error": "A valid name is made up of one or more components where each component is separated by period characters.  Each component must start and end with a lower case alphanumeric character and the body of the component is made up of zero or more lower case alphanumeric and hyphen characters.",
               "ui-title": "Name",
@@ -2536,7 +4471,15 @@
             "default": "eda-system",
             "type": "string",
             "x-eda-nokia-com": {
+              "i18n-keys": {
+                "title": "namespace"
+              },
               "immutable": true,
+              "key": {
+                "index": 1,
+                "is-mirror": true,
+                "is-namespace": true
+              },
               "ui-order-priority": 20,
               "ui-title": "Namespace",
               "ui-title-key": "namespace",
@@ -2549,6 +4492,10 @@
         ],
         "type": "object",
         "x-eda-nokia-com": {
+          "i18n-keys": {
+            "group": "core.eda.nokia.com",
+            "title": "metadata"
+          },
           "ui-order-priority": 10,
           "ui-title": "Metadata",
           "ui-title-key": "metadata"
@@ -2592,9 +4539,14 @@
                 "properties": {
                   "apiKey": {
                     "description": "The provider API key",
+                    "format": "password",
                     "title": "API Key",
                     "type": "string",
                     "x-eda-nokia-com": {
+                      "i18n-keys": {
+                        "description": "crd.Provider.spec.endpoint.apiKey._description",
+                        "title": "crd.Provider.spec.endpoint.apiKey._title"
+                      },
                       "ui-order-priority": 300
                     }
                   },
@@ -2603,6 +4555,10 @@
                     "title": "Description",
                     "type": "string",
                     "x-eda-nokia-com": {
+                      "i18n-keys": {
+                        "description": "crd.Provider.spec.endpoint.description._description",
+                        "title": "crd.Provider.spec.endpoint.description._title"
+                      },
                       "ui-order-priority": 100
                     }
                   },
@@ -2615,6 +4571,10 @@
                           "title": "Name",
                           "type": "string",
                           "x-eda-nokia-com": {
+                            "i18n-keys": {
+                              "description": "crd.Provider.spec.endpoint.headers._items.name._description",
+                              "title": "crd.Provider.spec.endpoint.headers._items.name._title"
+                            },
                             "ui-order-priority": 731
                           }
                         },
@@ -2623,6 +4583,10 @@
                           "title": "Value",
                           "type": "string",
                           "x-eda-nokia-com": {
+                            "i18n-keys": {
+                              "description": "crd.Provider.spec.endpoint.headers._items.value._description",
+                              "title": "crd.Provider.spec.endpoint.headers._items.value._title"
+                            },
                             "ui-order-priority": 732
                           }
                         }
@@ -2632,6 +4596,10 @@
                     "title": "Headers",
                     "type": "array",
                     "x-eda-nokia-com": {
+                      "i18n-keys": {
+                        "description": "crd.Provider.spec.endpoint.headers._description",
+                        "title": "crd.Provider.spec.endpoint.headers._title"
+                      },
                       "ui-order-priority": 400
                     }
                   },
@@ -2640,6 +4608,10 @@
                     "title": "URL",
                     "type": "string",
                     "x-eda-nokia-com": {
+                      "i18n-keys": {
+                        "description": "crd.Provider.spec.endpoint.url._description",
+                        "title": "crd.Provider.spec.endpoint.url._title"
+                      },
                       "ui-order-priority": 200
                     }
                   }
@@ -2650,6 +4622,10 @@
                 "title": "Endpoint",
                 "type": "object",
                 "x-eda-nokia-com": {
+                  "i18n-keys": {
+                    "description": "crd.Provider.spec.endpoint._description",
+                    "title": "crd.Provider.spec.endpoint._title"
+                  },
                   "ui-order-priority": 400
                 }
               },
@@ -2662,6 +4638,10 @@
                       "title": "Description",
                       "type": "string",
                       "x-eda-nokia-com": {
+                        "i18n-keys": {
+                          "description": "crd.Provider.spec.models._items.description._description",
+                          "title": "crd.Provider.spec.models._items.description._title"
+                        },
                         "ui-order-priority": 200
                       }
                     },
@@ -2670,6 +4650,10 @@
                       "title": "Name",
                       "type": "string",
                       "x-eda-nokia-com": {
+                        "i18n-keys": {
+                          "description": "crd.Provider.spec.models._items.name._description",
+                          "title": "crd.Provider.spec.models._items.name._title"
+                        },
                         "ui-order-priority": 100
                       }
                     },
@@ -2684,6 +4668,16 @@
                       "title": "Priority",
                       "type": "string",
                       "x-eda-nokia-com": {
+                        "i18n-keys": {
+                          "description": "crd.Provider.spec.models._items.priority._description",
+                          "enum": [
+                            "crd.Provider.spec.models._items.priority._enum.Auto",
+                            "crd.Provider.spec.models._items.priority._enum.Default",
+                            "crd.Provider.spec.models._items.priority._enum.Flex",
+                            "crd.Provider.spec.models._items.priority._enum.Priority"
+                          ],
+                          "title": "crd.Provider.spec.models._items.priority._title"
+                        },
                         "ui-order-priority": 500
                       }
                     },
@@ -2695,6 +4689,10 @@
                       "title": "Reasoning Level",
                       "type": "array",
                       "x-eda-nokia-com": {
+                        "i18n-keys": {
+                          "description": "crd.Provider.spec.models._items.reasoningLevel._description",
+                          "title": "crd.Provider.spec.models._items.reasoningLevel._title"
+                        },
                         "ui-order-priority": 400
                       }
                     },
@@ -2704,6 +4702,10 @@
                       "title": "Support Nested Responses",
                       "type": "boolean",
                       "x-eda-nokia-com": {
+                        "i18n-keys": {
+                          "description": "crd.Provider.spec.models._items.supportNestedResponses._description",
+                          "title": "crd.Provider.spec.models._items.supportNestedResponses._title"
+                        },
                         "ui-order-priority": 700
                       }
                     },
@@ -2712,6 +4714,10 @@
                       "title": "Temperature",
                       "type": "string",
                       "x-eda-nokia-com": {
+                        "i18n-keys": {
+                          "description": "crd.Provider.spec.models._items.temperature._description",
+                          "title": "crd.Provider.spec.models._items.temperature._title"
+                        },
                         "ui-order-priority": 600
                       }
                     },
@@ -2721,11 +4727,22 @@
                       "enum": [
                         "Embeddings",
                         "Responses",
-                        "Chat/Completions"
+                        "Chat/Completions",
+                        "Claude"
                       ],
                       "title": "Type",
                       "type": "string",
                       "x-eda-nokia-com": {
+                        "i18n-keys": {
+                          "description": "crd.Provider.spec.models._items.type._description",
+                          "enum": [
+                            "crd.Provider.spec.models._items.type._enum.Embeddings",
+                            "crd.Provider.spec.models._items.type._enum.Responses",
+                            "crd.Provider.spec.models._items.type._enum.Chat/Completions",
+                            "crd.Provider.spec.models._items.type._enum.Claude"
+                          ],
+                          "title": "crd.Provider.spec.models._items.type._title"
+                        },
                         "ui-order-priority": 200
                       }
                     },
@@ -2737,6 +4754,10 @@
                       "title": "Usage",
                       "type": "array",
                       "x-eda-nokia-com": {
+                        "i18n-keys": {
+                          "description": "crd.Provider.spec.models._items.usage._description",
+                          "title": "crd.Provider.spec.models._items.usage._title"
+                        },
                         "ui-order-priority": 300
                       }
                     }
@@ -2750,6 +4771,10 @@
                 "title": "Models",
                 "type": "array",
                 "x-eda-nokia-com": {
+                  "i18n-keys": {
+                    "description": "crd.Provider.spec.models._description",
+                    "title": "crd.Provider.spec.models._title"
+                  },
                   "ui-order-priority": 300
                 }
               },
@@ -2758,6 +4783,10 @@
                 "title": "Title",
                 "type": "string",
                 "x-eda-nokia-com": {
+                  "i18n-keys": {
+                    "description": "crd.Provider.spec.title._description",
+                    "title": "crd.Provider.spec.title._title"
+                  },
                   "ui-order-priority": 100
                 }
               }
@@ -2769,6 +4798,10 @@
             "title": "Specification",
             "type": "object",
             "x-eda-nokia-com": {
+              "i18n-keys": {
+                "description": "crd.Provider.spec._description",
+                "title": "crd.Provider.spec._title"
+              },
               "ui-order-priority": 30
             }
           },
@@ -2780,6 +4813,10 @@
                 "title": "Connected",
                 "type": "boolean",
                 "x-eda-nokia-com": {
+                  "i18n-keys": {
+                    "description": "crd.Provider.status.connected._description",
+                    "title": "crd.Provider.status.connected._title"
+                  },
                   "ui-order-priority": 100
                 }
               },
@@ -2788,6 +4825,10 @@
                 "title": "Error",
                 "type": "string",
                 "x-eda-nokia-com": {
+                  "i18n-keys": {
+                    "description": "crd.Provider.status.error._description",
+                    "title": "crd.Provider.status.error._title"
+                  },
                   "ui-order-priority": 200
                 }
               },
@@ -2797,6 +4838,10 @@
                 "title": "Last Checked",
                 "type": "string",
                 "x-eda-nokia-com": {
+                  "i18n-keys": {
+                    "description": "crd.Provider.status.lastChecked._description",
+                    "title": "crd.Provider.status.lastChecked._title"
+                  },
                   "ui-order-priority": 300
                 }
               },
@@ -2808,6 +4853,10 @@
                 "title": "Supported Models",
                 "type": "array",
                 "x-eda-nokia-com": {
+                  "i18n-keys": {
+                    "description": "crd.Provider.status.supportedModels._description",
+                    "title": "crd.Provider.status.supportedModels._title"
+                  },
                   "ui-order-priority": 400
                 }
               }
@@ -2822,6 +4871,10 @@
             "title": "Status",
             "type": "object",
             "x-eda-nokia-com": {
+              "i18n-keys": {
+                "description": "crd.Provider.status._description",
+                "title": "crd.Provider.status._title"
+              },
               "ui-order-priority": 20
             }
           }
@@ -2832,7 +4885,13 @@
           "metadata",
           "spec"
         ],
-        "type": "object"
+        "type": "object",
+        "x-eda-nokia-com": {
+          "i18n-keys": {
+            "description": "crd.Provider._description",
+            "group": "ai.core.eda.nokia.com"
+          }
+        }
       },
       "com.nokia.eda.core.ai.v1.ProviderList": {
         "description": "ProviderList is a list of providers",
@@ -2862,6 +4921,10 @@
             "format": "date-time",
             "type": "string",
             "x-eda-nokia-com": {
+              "i18n-keys": {
+                "group": "core.eda.nokia.com",
+                "title": "commitTime"
+              },
               "ui-order-priority": 50,
               "ui-title": "Commit Time",
               "ui-title-key": "commitTime"
@@ -2870,6 +4933,10 @@
           "hash": {
             "type": "string",
             "x-eda-nokia-com": {
+              "i18n-keys": {
+                "group": "core.eda.nokia.com",
+                "title": "commitHash"
+              },
               "ui-order-priority": 40,
               "ui-title": "Commit Hash",
               "ui-title-key": "commitHash"
@@ -2878,6 +4945,14 @@
           "name": {
             "type": "string",
             "x-eda-nokia-com": {
+              "i18n-keys": {
+                "group": "core.eda.nokia.com",
+                "title": "name"
+              },
+              "key": {
+                "index": 2,
+                "is-name": true
+              },
               "ui-order-priority": 10,
               "ui-title": "Name",
               "ui-title-key": "name"
@@ -2886,6 +4961,14 @@
           "namespace": {
             "type": "string",
             "x-eda-nokia-com": {
+              "i18n-keys": {
+                "group": "core.eda.nokia.com",
+                "title": "namespace"
+              },
+              "key": {
+                "index": 1,
+                "is-namespace": true
+              },
               "ui-order-priority": 20,
               "ui-title": "Namespace",
               "ui-title-key": "namespace"
@@ -2895,6 +4978,10 @@
             "format": "uint64",
             "type": "integer",
             "x-eda-nokia-com": {
+              "i18n-keys": {
+                "group": "core.eda.nokia.com",
+                "title": "transactionId"
+              },
               "ui-order-priority": 30,
               "ui-title": "Transaction ID",
               "ui-title-key": "transactionId"
@@ -2916,6 +5003,9 @@
             "readOnly": true,
             "type": "integer",
             "x-eda-nokia-com": {
+              "i18n-keys": {
+                "title": "alarm_severities.critical"
+              },
               "ui-title": "Critical",
               "ui-title-key": "alarm_severities.critical"
             }
@@ -2925,6 +5015,9 @@
             "readOnly": true,
             "type": "integer",
             "x-eda-nokia-com": {
+              "i18n-keys": {
+                "title": "alarm_severities.major"
+              },
               "ui-title": "Major",
               "ui-title-key": "alarm_severities.major"
             }
@@ -2934,6 +5027,9 @@
             "readOnly": true,
             "type": "integer",
             "x-eda-nokia-com": {
+              "i18n-keys": {
+                "title": "alarm_severities.minor"
+              },
               "ui-title": "minor",
               "ui-title-key": "alarm_severities.minor"
             }
@@ -2943,6 +5039,9 @@
             "readOnly": true,
             "type": "integer",
             "x-eda-nokia-com": {
+              "i18n-keys": {
+                "title": "alarm_severities.warning"
+              },
               "ui-title": "Warning",
               "ui-title-key": "alarm_severities.warning"
             }
@@ -2951,6 +5050,10 @@
         "readOnly": true,
         "type": "object",
         "x-eda-nokia-com": {
+          "i18n-keys": {
+            "group": "core.eda.nokia.com",
+            "title": "alarms"
+          },
           "ui-order-priority": 40,
           "ui-title": "Alarms",
           "ui-title-key": "alarms"
@@ -2963,6 +5066,9 @@
             "readOnly": true,
             "type": "integer",
             "x-eda-nokia-com": {
+              "i18n-keys": {
+                "title": "count_column"
+              },
               "ui-title": "Count",
               "ui-title-key": "count_column"
             }
@@ -2971,6 +5077,10 @@
         "readOnly": true,
         "type": "object",
         "x-eda-nokia-com": {
+          "i18n-keys": {
+            "group": "core.eda.nokia.com",
+            "title": "deviations"
+          },
           "ui-order-priority": 50,
           "ui-title": "Deviations",
           "ui-title-key": "deviations"
@@ -2984,6 +5094,9 @@
             },
             "type": "object",
             "x-eda-nokia-com": {
+              "i18n-keys": {
+                "title": "annotations"
+              },
               "ui-order-priority": 40,
               "ui-title": "Annotations",
               "ui-title-key": "annotations"
@@ -2995,6 +5108,9 @@
             },
             "type": "object",
             "x-eda-nokia-com": {
+              "i18n-keys": {
+                "title": "labels"
+              },
               "ui-auto-completes": [
                 {
                   "condition": "true",
@@ -3014,7 +5130,15 @@
             "pattern": "^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$",
             "type": "string",
             "x-eda-nokia-com": {
+              "i18n-keys": {
+                "title": "name"
+              },
               "immutable": true,
+              "key": {
+                "index": 2,
+                "is-mirror": true,
+                "is-name": true
+              },
               "ui-order-priority": 10,
               "ui-pattern-error": "A valid name is made up of one or more components where each component is separated by period characters.  Each component must start and end with a lower case alphanumeric character and the body of the component is made up of zero or more lower case alphanumeric and hyphen characters.",
               "ui-title": "Name",
@@ -3025,7 +5149,15 @@
             "default": "eda-system",
             "type": "string",
             "x-eda-nokia-com": {
+              "i18n-keys": {
+                "title": "namespace"
+              },
               "immutable": true,
+              "key": {
+                "index": 1,
+                "is-mirror": true,
+                "is-namespace": true
+              },
               "ui-order-priority": 20,
               "ui-title": "Namespace",
               "ui-title-key": "namespace",
@@ -3038,6 +5170,10 @@
         ],
         "type": "object",
         "x-eda-nokia-com": {
+          "i18n-keys": {
+            "group": "core.eda.nokia.com",
+            "title": "metadata"
+          },
           "ui-order-priority": 10,
           "ui-title": "Metadata",
           "ui-title-key": "metadata"
@@ -3177,6 +5313,836 @@
         ]
       }
     },
+    "/apps/ai.core.eda.nokia.com/v1/mcpclients": {
+      "delete": {
+        "description": "Delete all instances of MCPClient.  If MCPClient is a namespaced resource, all instances in all namespaces will\nbe deleted, and this is restricted to users with the system-administrator role.\nIf a non-namespaced MCPClient, it deletes all instances of that non-namespaced resource.",
+        "operationId": "deleteAllAiCoreEdaNokiaComV1Mcpclients",
+        "parameters": [
+          {
+            "description": "The detail level to keep in the transaction log for the transaction resulting from this request.",
+            "in": "query",
+            "name": "detailLevel",
+            "schema": {
+              "default": "standard",
+              "enum": [
+                "standard",
+                "detailed"
+              ],
+              "type": "string"
+            }
+          },
+          {
+            "description": "If true, prevents the transaction resulting from this request from being bundled with others.",
+            "in": "query",
+            "name": "disableBatching",
+            "schema": {
+              "default": false,
+              "type": "boolean"
+            }
+          },
+          {
+            "description": "If true, pipelines will not be run for the resulting transaction",
+            "in": "query",
+            "name": "skipPipeline",
+            "schema": {
+              "default": false,
+              "type": "boolean"
+            }
+          },
+          {
+            "description": "a label selector string to filter the set of CRs deleted based on CR labels",
+            "in": "query",
+            "name": "labelSelector",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "deprecated": true,
+            "description": "Deprecated: a label selector string to filter the set of CRs deleted based on CR labels",
+            "in": "query",
+            "name": "label-selector",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/com.nokia.eda.core.ai.v1.MCPClientList"
+                }
+              },
+              "application/yaml": {
+                "schema": {
+                  "$ref": "#/components/schemas/com.nokia.eda.core.ai.v1.MCPClientList"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Details of an error in response to an API REST request."
+          }
+        },
+        "tags": [
+          "apps"
+        ]
+      },
+      "get": {
+        "description": "The resulting resources can optionally be a subset of the resource content by using the \"fields\" query parameter.",
+        "operationId": "listAiCoreEdaNokiaComV1Mcpclients",
+        "parameters": [
+          {
+            "description": "client information for streaming request",
+            "in": "query",
+            "name": "eventclient",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "stream information for streaming request",
+            "in": "query",
+            "name": "stream",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "a comma-separated list of resource fields to fetch/return.  If unspecified, all fields are fetched.  If empty, only key-fields are fetched.",
+            "in": "query",
+            "name": "fields",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "an EQL \"where\" expression that will be used to filter the set of resources returned.",
+            "in": "query",
+            "name": "filter",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "A label selector string to filter the results based on resource labels. If specified multiple times, the union of resources which satisfy a label-selector will be returned.",
+            "in": "query",
+            "name": "labelSelector",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "deprecated": true,
+            "description": "Deprecated: a label selector string to filter the results based on CR labels",
+            "in": "query",
+            "name": "label-selector",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/com.nokia.eda.core.ai.v1.MCPClientList"
+                }
+              },
+              "application/yaml": {
+                "schema": {
+                  "$ref": "#/components/schemas/com.nokia.eda.core.ai.v1.MCPClientList"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Details of an error in response to an API REST request."
+          }
+        },
+        "summary": "list mcpclients",
+        "tags": [
+          "apps"
+        ]
+      },
+      "post": {
+        "description": "create a non-namespaced MCPClient",
+        "operationId": "createAiCoreEdaNokiaComV1Mcpclients",
+        "parameters": [
+          {
+            "description": "The detail level to keep in the transaction log for the transaction resulting from this request.",
+            "in": "query",
+            "name": "detailLevel",
+            "schema": {
+              "default": "standard",
+              "enum": [
+                "standard",
+                "detailed"
+              ],
+              "type": "string"
+            }
+          },
+          {
+            "description": "If true, prevents the transaction resulting from this request from being bundled with others.",
+            "in": "query",
+            "name": "disableBatching",
+            "schema": {
+              "default": false,
+              "type": "boolean"
+            }
+          },
+          {
+            "description": "If true, pipelines will not be run for the resulting transaction",
+            "in": "query",
+            "name": "skipPipeline",
+            "schema": {
+              "default": false,
+              "type": "boolean"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/com.nokia.eda.core.ai.v1.MCPClient"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/com.nokia.eda.core.ai.v1.MCPClient"
+                }
+              },
+              "application/yaml": {
+                "schema": {
+                  "$ref": "#/components/schemas/com.nokia.eda.core.ai.v1.MCPClient"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Details of an error in response to an API REST request."
+          }
+        },
+        "tags": [
+          "apps"
+        ]
+      }
+    },
+    "/apps/ai.core.eda.nokia.com/v1/mcpclients/_deleted": {
+      "get": {
+        "operationId": "getDeletedAiCoreEdaNokiaComV1Mcpclients",
+        "parameters": [
+          {
+            "description": "client information for streaming request",
+            "in": "query",
+            "name": "eventclient",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "stream information for streaming request",
+            "in": "query",
+            "name": "stream",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/com.nokia.eda.core.ai.v1.MCPClient_DeletedResources"
+                }
+              },
+              "application/yaml": {
+                "schema": {
+                  "$ref": "#/components/schemas/com.nokia.eda.core.ai.v1.MCPClient_DeletedResources"
+                }
+              }
+            },
+            "description": "Returns list of deleted resource entries"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Details of an error in response to an API REST request."
+          }
+        },
+        "summary": "Get information about the instances of MCPClient that have been deleted.",
+        "tags": [
+          "apps"
+        ]
+      }
+    },
+    "/apps/ai.core.eda.nokia.com/v1/mcpclients/{name}": {
+      "delete": {
+        "description": "delete the specified non-namespaced MCPClient",
+        "operationId": "deleteAiCoreEdaNokiaComV1Mcpclients",
+        "parameters": [
+          {
+            "description": "The detail level to keep in the transaction log for the transaction resulting from this request.",
+            "in": "query",
+            "name": "detailLevel",
+            "schema": {
+              "default": "standard",
+              "enum": [
+                "standard",
+                "detailed"
+              ],
+              "type": "string"
+            }
+          },
+          {
+            "description": "If true, prevents the transaction resulting from this request from being bundled with others.",
+            "in": "query",
+            "name": "disableBatching",
+            "schema": {
+              "default": false,
+              "type": "boolean"
+            }
+          },
+          {
+            "description": "If true, pipelines will not be run for the resulting transaction",
+            "in": "query",
+            "name": "skipPipeline",
+            "schema": {
+              "default": false,
+              "type": "boolean"
+            }
+          },
+          {
+            "description": "name of the MCPClient to delete",
+            "in": "path",
+            "name": "name",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Status"
+                }
+              },
+              "application/yaml": {
+                "schema": {
+                  "$ref": "#/components/schemas/Status"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Details of an error in response to an API REST request."
+          }
+        },
+        "tags": [
+          "apps"
+        ]
+      },
+      "get": {
+        "description": "read the specified non-namespaced MCPClient.  If a git hash query parameter\nis supplied, the resource as it existed at the time of the git hash\nwill be returned. Streaming is not supported when a particular revision\nis asked for.",
+        "operationId": "readAiCoreEdaNokiaComV1Mcpclients",
+        "parameters": [
+          {
+            "description": "name of the MCPClient",
+            "in": "path",
+            "name": "name",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "client information for streaming request",
+            "in": "query",
+            "name": "eventclient",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "stream information for streaming request",
+            "in": "query",
+            "name": "stream",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "resource content will be returned as it was at the time of this git hash",
+            "in": "query",
+            "name": "hash",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/com.nokia.eda.core.ai.v1.MCPClient"
+                }
+              },
+              "application/yaml": {
+                "schema": {
+                  "$ref": "#/components/schemas/com.nokia.eda.core.ai.v1.MCPClient"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Details of an error in response to an API REST request."
+          }
+        },
+        "tags": [
+          "apps"
+        ]
+      },
+      "patch": {
+        "description": "patch a non-namespaced MCPClient",
+        "operationId": "patchAiCoreEdaNokiaComV1Mcpclients",
+        "parameters": [
+          {
+            "description": "The detail level to keep in the transaction log for the transaction resulting from this request.",
+            "in": "query",
+            "name": "detailLevel",
+            "schema": {
+              "default": "standard",
+              "enum": [
+                "standard",
+                "detailed"
+              ],
+              "type": "string"
+            }
+          },
+          {
+            "description": "If true, prevents the transaction resulting from this request from being bundled with others.",
+            "in": "query",
+            "name": "disableBatching",
+            "schema": {
+              "default": false,
+              "type": "boolean"
+            }
+          },
+          {
+            "description": "If true, pipelines will not be run for the resulting transaction",
+            "in": "query",
+            "name": "skipPipeline",
+            "schema": {
+              "default": false,
+              "type": "boolean"
+            }
+          },
+          {
+            "in": "path",
+            "name": "name",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json-patch+json": {
+              "schema": {
+                "$ref": "#/components/schemas/Patch"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/com.nokia.eda.core.ai.v1.MCPClient"
+                }
+              },
+              "application/yaml": {
+                "schema": {
+                  "$ref": "#/components/schemas/com.nokia.eda.core.ai.v1.MCPClient"
+                }
+              }
+            },
+            "description": "The response for a successful EDA resource patch operation."
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Details of an error in response to an API REST request."
+          }
+        },
+        "tags": [
+          "apps"
+        ]
+      },
+      "put": {
+        "description": "replace a non-namespaced MCPClient",
+        "operationId": "replaceAiCoreEdaNokiaComV1Mcpclients",
+        "parameters": [
+          {
+            "description": "The detail level to keep in the transaction log for the transaction resulting from this request.",
+            "in": "query",
+            "name": "detailLevel",
+            "schema": {
+              "default": "standard",
+              "enum": [
+                "standard",
+                "detailed"
+              ],
+              "type": "string"
+            }
+          },
+          {
+            "description": "If true, prevents the transaction resulting from this request from being bundled with others.",
+            "in": "query",
+            "name": "disableBatching",
+            "schema": {
+              "default": false,
+              "type": "boolean"
+            }
+          },
+          {
+            "description": "If true, pipelines will not be run for the resulting transaction",
+            "in": "query",
+            "name": "skipPipeline",
+            "schema": {
+              "default": false,
+              "type": "boolean"
+            }
+          },
+          {
+            "in": "path",
+            "name": "name",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/com.nokia.eda.core.ai.v1.MCPClient"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/com.nokia.eda.core.ai.v1.MCPClient"
+                }
+              },
+              "application/yaml": {
+                "schema": {
+                  "$ref": "#/components/schemas/com.nokia.eda.core.ai.v1.MCPClient"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Details of an error in response to an API REST request."
+          }
+        },
+        "tags": [
+          "apps"
+        ]
+      }
+    },
+    "/apps/ai.core.eda.nokia.com/v1/mcpclients/{name}/_revs": {
+      "get": {
+        "operationId": "getHistoryAiCoreEdaNokiaComV1Mcpclients",
+        "parameters": [
+          {
+            "description": "name of the MCPClient to retrieve",
+            "in": "path",
+            "name": "name",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "client information for streaming request",
+            "in": "query",
+            "name": "eventclient",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "stream information for streaming request",
+            "in": "query",
+            "name": "stream",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "maximum number of history entries to return",
+            "in": "query",
+            "name": "limit",
+            "schema": {
+              "format": "uint64",
+              "minimum": 1,
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResourceHistory"
+                }
+              },
+              "application/yaml": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResourceHistory"
+                }
+              }
+            },
+            "description": "Returns the change history of the specified resource"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Details of an error in response to an API REST request."
+          }
+        },
+        "summary": "Get revision history for the specified non-namespaced MCPClient.",
+        "tags": [
+          "apps"
+        ]
+      }
+    },
+    "/apps/ai.core.eda.nokia.com/v1/mcpclients/{name}/_targets": {
+      "get": {
+        "operationId": "getTargetsAiCoreEdaNokiaComV1Mcpclients",
+        "parameters": [
+          {
+            "description": "name of the MCPClient",
+            "in": "path",
+            "name": "name",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "client information for streaming request",
+            "in": "query",
+            "name": "eventclient",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "stream information for streaming request",
+            "in": "query",
+            "name": "stream",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IntentTargets"
+                }
+              },
+              "application/yaml": {
+                "schema": {
+                  "$ref": "#/components/schemas/IntentTargets"
+                }
+              }
+            },
+            "description": "Returns the list of intent targets for the specified MCPClient resource."
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Details of an error in response to an API REST request."
+          }
+        },
+        "summary": "Get intent targets for the specified non-namespaced MCPClient.",
+        "tags": [
+          "apps"
+        ]
+      }
+    },
+    "/apps/ai.core.eda.nokia.com/v1/mcpclients/{name}/_topology": {
+      "post": {
+        "operationId": "postTopologyAiCoreEdaNokiaComV1Mcpclients",
+        "parameters": [
+          {
+            "description": "name of the MCPClient to retrieve",
+            "in": "path",
+            "name": "name",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "client information for streaming request",
+            "in": "query",
+            "name": "eventclient",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "stream information for streaming request",
+            "in": "query",
+            "name": "stream",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/K8STopologyRequest"
+              }
+            }
+          },
+          "description": "the details of topology to retrieve",
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResourceTopology"
+                }
+              },
+              "application/yaml": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResourceTopology"
+                }
+              }
+            },
+            "description": "Returns the topology of the specified resource"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Details of an error in response to an API REST request."
+          }
+        },
+        "summary": "Retrieve the topology for the specified non-namespaced MCPClient.",
+        "tags": [
+          "apps"
+        ]
+      }
+    },
     "/apps/ai.core.eda.nokia.com/v1/mcpprompttemplates": {
       "delete": {
         "description": "Delete all instances of MCPPromptTemplate.  If MCPPromptTemplate is a namespaced resource, all instances in all namespaces will\nbe deleted, and this is restricted to users with the system-administrator role.\nIf a non-namespaced MCPPromptTemplate, it deletes all instances of that non-namespaced resource.",
@@ -3199,6 +6165,15 @@
             "description": "If true, prevents the transaction resulting from this request from being bundled with others.",
             "in": "query",
             "name": "disableBatching",
+            "schema": {
+              "default": false,
+              "type": "boolean"
+            }
+          },
+          {
+            "description": "If true, pipelines will not be run for the resulting transaction",
+            "in": "query",
+            "name": "skipPipeline",
             "schema": {
               "default": false,
               "type": "boolean"
@@ -3364,6 +6339,15 @@
               "default": false,
               "type": "boolean"
             }
+          },
+          {
+            "description": "If true, pipelines will not be run for the resulting transaction",
+            "in": "query",
+            "name": "skipPipeline",
+            "schema": {
+              "default": false,
+              "type": "boolean"
+            }
           }
         ],
         "requestBody": {
@@ -3484,6 +6468,15 @@
             "description": "If true, prevents the transaction resulting from this request from being bundled with others.",
             "in": "query",
             "name": "disableBatching",
+            "schema": {
+              "default": false,
+              "type": "boolean"
+            }
+          },
+          {
+            "description": "If true, pipelines will not be run for the resulting transaction",
+            "in": "query",
+            "name": "skipPipeline",
             "schema": {
               "default": false,
               "type": "boolean"
@@ -3626,6 +6619,15 @@
             }
           },
           {
+            "description": "If true, pipelines will not be run for the resulting transaction",
+            "in": "query",
+            "name": "skipPipeline",
+            "schema": {
+              "default": false,
+              "type": "boolean"
+            }
+          },
+          {
             "in": "path",
             "name": "name",
             "required": true,
@@ -3696,6 +6698,15 @@
             "description": "If true, prevents the transaction resulting from this request from being bundled with others.",
             "in": "query",
             "name": "disableBatching",
+            "schema": {
+              "default": false,
+              "type": "boolean"
+            }
+          },
+          {
+            "description": "If true, pipelines will not be run for the resulting transaction",
+            "in": "query",
+            "name": "skipPipeline",
             "schema": {
               "default": false,
               "type": "boolean"
@@ -3990,6 +7001,15 @@
             }
           },
           {
+            "description": "If true, pipelines will not be run for the resulting transaction",
+            "in": "query",
+            "name": "skipPipeline",
+            "schema": {
+              "default": false,
+              "type": "boolean"
+            }
+          },
+          {
             "description": "a label selector string to filter the set of CRs deleted based on CR labels",
             "in": "query",
             "name": "labelSelector",
@@ -4149,6 +7169,15 @@
               "default": false,
               "type": "boolean"
             }
+          },
+          {
+            "description": "If true, pipelines will not be run for the resulting transaction",
+            "in": "query",
+            "name": "skipPipeline",
+            "schema": {
+              "default": false,
+              "type": "boolean"
+            }
           }
         ],
         "requestBody": {
@@ -4269,6 +7298,15 @@
             "description": "If true, prevents the transaction resulting from this request from being bundled with others.",
             "in": "query",
             "name": "disableBatching",
+            "schema": {
+              "default": false,
+              "type": "boolean"
+            }
+          },
+          {
+            "description": "If true, pipelines will not be run for the resulting transaction",
+            "in": "query",
+            "name": "skipPipeline",
             "schema": {
               "default": false,
               "type": "boolean"
@@ -4411,6 +7449,15 @@
             }
           },
           {
+            "description": "If true, pipelines will not be run for the resulting transaction",
+            "in": "query",
+            "name": "skipPipeline",
+            "schema": {
+              "default": false,
+              "type": "boolean"
+            }
+          },
+          {
             "in": "path",
             "name": "name",
             "required": true,
@@ -4481,6 +7528,15 @@
             "description": "If true, prevents the transaction resulting from this request from being bundled with others.",
             "in": "query",
             "name": "disableBatching",
+            "schema": {
+              "default": false,
+              "type": "boolean"
+            }
+          },
+          {
+            "description": "If true, pipelines will not be run for the resulting transaction",
+            "in": "query",
+            "name": "skipPipeline",
             "schema": {
               "default": false,
               "type": "boolean"
@@ -4775,6 +7831,15 @@
             }
           },
           {
+            "description": "If true, pipelines will not be run for the resulting transaction",
+            "in": "query",
+            "name": "skipPipeline",
+            "schema": {
+              "default": false,
+              "type": "boolean"
+            }
+          },
+          {
             "description": "a label selector string to filter the set of CRs deleted based on CR labels",
             "in": "query",
             "name": "labelSelector",
@@ -4934,6 +7999,15 @@
               "default": false,
               "type": "boolean"
             }
+          },
+          {
+            "description": "If true, pipelines will not be run for the resulting transaction",
+            "in": "query",
+            "name": "skipPipeline",
+            "schema": {
+              "default": false,
+              "type": "boolean"
+            }
           }
         ],
         "requestBody": {
@@ -5054,6 +8128,15 @@
             "description": "If true, prevents the transaction resulting from this request from being bundled with others.",
             "in": "query",
             "name": "disableBatching",
+            "schema": {
+              "default": false,
+              "type": "boolean"
+            }
+          },
+          {
+            "description": "If true, pipelines will not be run for the resulting transaction",
+            "in": "query",
+            "name": "skipPipeline",
             "schema": {
               "default": false,
               "type": "boolean"
@@ -5196,6 +8279,15 @@
             }
           },
           {
+            "description": "If true, pipelines will not be run for the resulting transaction",
+            "in": "query",
+            "name": "skipPipeline",
+            "schema": {
+              "default": false,
+              "type": "boolean"
+            }
+          },
+          {
             "in": "path",
             "name": "name",
             "required": true,
@@ -5266,6 +8358,15 @@
             "description": "If true, prevents the transaction resulting from this request from being bundled with others.",
             "in": "query",
             "name": "disableBatching",
+            "schema": {
+              "default": false,
+              "type": "boolean"
+            }
+          },
+          {
+            "description": "If true, pipelines will not be run for the resulting transaction",
+            "in": "query",
+            "name": "skipPipeline",
             "schema": {
               "default": false,
               "type": "boolean"
@@ -5560,6 +8661,15 @@
             }
           },
           {
+            "description": "If true, pipelines will not be run for the resulting transaction",
+            "in": "query",
+            "name": "skipPipeline",
+            "schema": {
+              "default": false,
+              "type": "boolean"
+            }
+          },
+          {
             "description": "a label selector string to filter the set of CRs deleted based on CR labels",
             "in": "query",
             "name": "labelSelector",
@@ -5719,6 +8829,15 @@
               "default": false,
               "type": "boolean"
             }
+          },
+          {
+            "description": "If true, pipelines will not be run for the resulting transaction",
+            "in": "query",
+            "name": "skipPipeline",
+            "schema": {
+              "default": false,
+              "type": "boolean"
+            }
           }
         ],
         "requestBody": {
@@ -5839,6 +8958,15 @@
             "description": "If true, prevents the transaction resulting from this request from being bundled with others.",
             "in": "query",
             "name": "disableBatching",
+            "schema": {
+              "default": false,
+              "type": "boolean"
+            }
+          },
+          {
+            "description": "If true, pipelines will not be run for the resulting transaction",
+            "in": "query",
+            "name": "skipPipeline",
             "schema": {
               "default": false,
               "type": "boolean"
@@ -5981,6 +9109,15 @@
             }
           },
           {
+            "description": "If true, pipelines will not be run for the resulting transaction",
+            "in": "query",
+            "name": "skipPipeline",
+            "schema": {
+              "default": false,
+              "type": "boolean"
+            }
+          },
+          {
             "in": "path",
             "name": "name",
             "required": true,
@@ -6051,6 +9188,15 @@
             "description": "If true, prevents the transaction resulting from this request from being bundled with others.",
             "in": "query",
             "name": "disableBatching",
+            "schema": {
+              "default": false,
+              "type": "boolean"
+            }
+          },
+          {
+            "description": "If true, pipelines will not be run for the resulting transaction",
+            "in": "query",
+            "name": "skipPipeline",
             "schema": {
               "default": false,
               "type": "boolean"
@@ -6345,6 +9491,15 @@
             }
           },
           {
+            "description": "If true, pipelines will not be run for the resulting transaction",
+            "in": "query",
+            "name": "skipPipeline",
+            "schema": {
+              "default": false,
+              "type": "boolean"
+            }
+          },
+          {
             "description": "a label selector string to filter the set of CRs deleted based on CR labels",
             "in": "query",
             "name": "labelSelector",
@@ -6504,6 +9659,15 @@
               "default": false,
               "type": "boolean"
             }
+          },
+          {
+            "description": "If true, pipelines will not be run for the resulting transaction",
+            "in": "query",
+            "name": "skipPipeline",
+            "schema": {
+              "default": false,
+              "type": "boolean"
+            }
           }
         ],
         "requestBody": {
@@ -6624,6 +9788,15 @@
             "description": "If true, prevents the transaction resulting from this request from being bundled with others.",
             "in": "query",
             "name": "disableBatching",
+            "schema": {
+              "default": false,
+              "type": "boolean"
+            }
+          },
+          {
+            "description": "If true, pipelines will not be run for the resulting transaction",
+            "in": "query",
+            "name": "skipPipeline",
             "schema": {
               "default": false,
               "type": "boolean"
@@ -6766,6 +9939,15 @@
             }
           },
           {
+            "description": "If true, pipelines will not be run for the resulting transaction",
+            "in": "query",
+            "name": "skipPipeline",
+            "schema": {
+              "default": false,
+              "type": "boolean"
+            }
+          },
+          {
             "in": "path",
             "name": "name",
             "required": true,
@@ -6836,6 +10018,15 @@
             "description": "If true, prevents the transaction resulting from this request from being bundled with others.",
             "in": "query",
             "name": "disableBatching",
+            "schema": {
+              "default": false,
+              "type": "boolean"
+            }
+          },
+          {
+            "description": "If true, pipelines will not be run for the resulting transaction",
+            "in": "query",
+            "name": "skipPipeline",
             "schema": {
               "default": false,
               "type": "boolean"

@@ -22,7 +22,6 @@ description: |-
 ### Optional
 
 - `hash` (String) resource content will be returned as it was at the time of this git hash
-- `spec` (Attributes) MCPPromptTemplateSpec defines the desired state of PromptTemplate (see [below for nested schema](#nestedatt--spec))
 
 ### Read-Only
 
@@ -31,55 +30,8 @@ description: |-
 - `deviations` (Attributes) (see [below for nested schema](#nestedatt--deviations))
 - `kind` (String)
 - `metadata` (Attributes) (see [below for nested schema](#nestedatt--metadata))
+- `spec` (Attributes) MCPPromptTemplateSpec defines the desired state of PromptTemplate (see [below for nested schema](#nestedatt--spec))
 - `status` (Attributes) MCPPromptTemplateStatus defines the observed state of PromptTemplate (see [below for nested schema](#nestedatt--status))
-
-<a id="nestedatt--spec"></a>
-### Nested Schema for `spec`
-
-Optional:
-
-- `arguments` (Attributes List) List of arguments for the prompt (see [below for nested schema](#nestedatt--spec--arguments))
-- `content` (Attributes List) The prompt template with placeholders for arguments in {{argName}} format. (see [below for nested schema](#nestedatt--spec--content))
-- `description` (String) A brief description of the prompt
-- `title` (String) A human friendly title for the prompt
-
-<a id="nestedatt--spec--arguments"></a>
-### Nested Schema for `spec.arguments`
-
-Optional:
-
-- `description` (String) A brief description of the argument
-- `name` (String) Argument name to be used in the prompt template
-- `required` (Boolean) Whether the argument is required
-- `title` (String) A human friendly title for the argument
-
-
-<a id="nestedatt--spec--content"></a>
-### Nested Schema for `spec.content`
-
-Optional:
-
-- `resource` (Attributes) Resource content (see [below for nested schema](#nestedatt--spec--content--resource))
-- `text` (Attributes) Text content (see [below for nested schema](#nestedatt--spec--content--text))
-- `type` (String) The content type
-
-<a id="nestedatt--spec--content--resource"></a>
-### Nested Schema for `spec.content.resource`
-
-Optional:
-
-- `uri` (String) The resource URI
-
-
-<a id="nestedatt--spec--content--text"></a>
-### Nested Schema for `spec.content.text`
-
-Optional:
-
-- `template` (String) The text content template
-
-
-
 
 <a id="nestedatt--alarms"></a>
 ### Nested Schema for `alarms`
@@ -109,6 +61,62 @@ Read-Only:
 - `labels` (Map of String)
 - `name` (String)
 - `namespace` (String)
+
+
+<a id="nestedatt--spec"></a>
+### Nested Schema for `spec`
+
+Read-Only:
+
+- `arguments` (Attributes List) List of arguments for the prompt (see [below for nested schema](#nestedatt--spec--arguments))
+- `content` (Attributes List) The prompt template with placeholders for arguments in {{argName}} format. (see [below for nested schema](#nestedatt--spec--content))
+- `description` (String) A brief description of the prompt
+- `enabled` (Boolean) Whether the prompt template is enabled
+- `title` (String) A human friendly title for the prompt
+
+<a id="nestedatt--spec--arguments"></a>
+### Nested Schema for `spec.arguments`
+
+Read-Only:
+
+- `autocomplete` (String) Autocomplete string for the argument
+Examples:
+- '{"type":"gvr", "group":"core.eda.nokia.com", "version":"v1", "resource":"namespaces"}'
+- '{"type":"query", "table":".namespace.node.srl", "field": ".namespace.node.name", "where": "version = \"26.3.1\""}'
+- '{"type":"labelselector", "group":"core.eda.nokia.com", "kind":"TopoNode"}'
+- `choices` (List of String) Choices for the argument
+- `default` (String) Whether the argument is hidden
+- `description` (String) A brief description of the argument
+- `name` (String) Argument name to be used in the prompt template
+- `required` (Boolean) Whether the argument is required
+- `title` (String) A human friendly title for the argument
+
+
+<a id="nestedatt--spec--content"></a>
+### Nested Schema for `spec.content`
+
+Read-Only:
+
+- `resource` (Attributes) Resource content (see [below for nested schema](#nestedatt--spec--content--resource))
+- `text` (Attributes) Text content (see [below for nested schema](#nestedatt--spec--content--text))
+- `type` (String) The content type
+
+<a id="nestedatt--spec--content--resource"></a>
+### Nested Schema for `spec.content.resource`
+
+Read-Only:
+
+- `uri` (String) The resource URI
+
+
+<a id="nestedatt--spec--content--text"></a>
+### Nested Schema for `spec.content.text`
+
+Read-Only:
+
+- `template` (String) The text content template
+
+
 
 
 <a id="nestedatt--status"></a>

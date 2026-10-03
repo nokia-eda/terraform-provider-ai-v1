@@ -54,6 +54,7 @@ Required:
 Optional:
 
 - `description` (String) A brief description of the resource
+- `enabled` (Boolean) Whether the tool definition is enabled
 - `input_schema` (String) Input schema for the tool (JSONSchema)
 - `output_schema` (String) Output schema for the tool (JSONSchema)
 
@@ -81,6 +82,11 @@ Default 30 seconds
 If not specified, the system default trust bundle will be used.
 - `url` (String) HTTP endpoint URL.
 Includes scheme, host, port and path.
+- `url_params_retained_in_body` (List of String) URL template parameters that should also be retained in the request body.
+By default, any parameter referenced by the URL template (e.g. /{{namespace}})
+is removed from the forwarded body. List parameter names here to keep them
+in the body as well. This is useful for APIs that expect the same value in both
+the URL path and the body.
 
 <a id="nestedatt--spec--provider--http--headers"></a>
 ### Nested Schema for `spec.provider.http.headers`

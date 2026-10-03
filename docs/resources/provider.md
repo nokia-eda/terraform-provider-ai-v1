@@ -60,7 +60,7 @@ Optional:
 
 Required:
 
-- `api_key` (String) The provider API key
+- `api_key` (String, Sensitive) The provider API key
 
 Optional:
 

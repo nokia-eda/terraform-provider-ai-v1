@@ -172,6 +172,7 @@ func McpSettingsResourceSchema(ctx context.Context) schema.Schema {
 							},
 						},
 						Optional:            true,
+						Computed:            true,
 						Description:         "MCP capabilities",
 						MarkdownDescription: "MCP capabilities",
 					},
@@ -181,6 +182,12 @@ func McpSettingsResourceSchema(ctx context.Context) schema.Schema {
 						Description:         "Enable EDA MCP Server",
 						MarkdownDescription: "Enable EDA MCP Server",
 						Default:             booldefault.StaticBool(false),
+					},
+					"instructions": schema.StringAttribute{
+						Optional:            true,
+						Computed:            true,
+						Description:         "MCP Server Instructions",
+						MarkdownDescription: "MCP Server Instructions",
 					},
 				},
 				CustomType: SpecType{
@@ -1644,6 +1651,24 @@ func (t SpecType) ValueFromObject(ctx context.Context, in basetypes.ObjectValue)
 			fmt.Sprintf(`enabled expected to be basetypes.BoolValue, was: %T`, enabledAttribute))
 	}
 
+	instructionsAttribute, ok := attributes["instructions"]
+
+	if !ok {
+		diags.AddError(
+			"Attribute Missing",
+			`instructions is missing from object`)
+
+		return nil, diags
+	}
+
+	instructionsVal, ok := instructionsAttribute.(basetypes.StringValue)
+
+	if !ok {
+		diags.AddError(
+			"Attribute Wrong Type",
+			fmt.Sprintf(`instructions expected to be basetypes.StringValue, was: %T`, instructionsAttribute))
+	}
+
 	if diags.HasError() {
 		return nil, diags
 	}
@@ -1651,6 +1676,7 @@ func (t SpecType) ValueFromObject(ctx context.Context, in basetypes.ObjectValue)
 	return SpecValue{
 		Capabilities: capabilitiesVal,
 		Enabled:      enabledVal,
+		Instructions: instructionsVal,
 		state:        attr.ValueStateKnown,
 	}, diags
 }
@@ -1754,6 +1780,24 @@ func NewSpecValue(attributeTypes map[string]attr.Type, attributes map[string]att
 			fmt.Sprintf(`enabled expected to be basetypes.BoolValue, was: %T`, enabledAttribute))
 	}
 
+	instructionsAttribute, ok := attributes["instructions"]
+
+	if !ok {
+		diags.AddError(
+			"Attribute Missing",
+			`instructions is missing from object`)
+
+		return NewSpecValueUnknown(), diags
+	}
+
+	instructionsVal, ok := instructionsAttribute.(basetypes.StringValue)
+
+	if !ok {
+		diags.AddError(
+			"Attribute Wrong Type",
+			fmt.Sprintf(`instructions expected to be basetypes.StringValue, was: %T`, instructionsAttribute))
+	}
+
 	if diags.HasError() {
 		return NewSpecValueUnknown(), diags
 	}
@@ -1761,6 +1805,7 @@ func NewSpecValue(attributeTypes map[string]attr.Type, attributes map[string]att
 	return SpecValue{
 		Capabilities: capabilitiesVal,
 		Enabled:      enabledVal,
+		Instructions: instructionsVal,
 		state:        attr.ValueStateKnown,
 	}, diags
 }
@@ -1835,11 +1880,12 @@ var _ basetypes.ObjectValuable = SpecValue{}
 type SpecValue struct {
 	Capabilities basetypes.ObjectValue `tfsdk:"capabilities"`
 	Enabled      basetypes.BoolValue   `tfsdk:"enabled"`
+	Instructions basetypes.StringValue `tfsdk:"instructions"`
 	state        attr.ValueState
 }
 
 func (v SpecValue) ToTerraformValue(ctx context.Context) (tftypes.Value, error) {
-	attrTypes := make(map[string]tftypes.Type, 2)
+	attrTypes := make(map[string]tftypes.Type, 3)
 
 	var val tftypes.Value
 	var err error
@@ -1848,12 +1894,13 @@ func (v SpecValue) ToTerraformValue(ctx context.Context) (tftypes.Value, error) 
 		AttrTypes: CapabilitiesValue{}.AttributeTypes(ctx),
 	}.TerraformType(ctx)
 	attrTypes["enabled"] = basetypes.BoolType{}.TerraformType(ctx)
+	attrTypes["instructions"] = basetypes.StringType{}.TerraformType(ctx)
 
 	objectType := tftypes.Object{AttributeTypes: attrTypes}
 
 	switch v.state {
 	case attr.ValueStateKnown:
-		vals := make(map[string]tftypes.Value, 2)
+		vals := make(map[string]tftypes.Value, 3)
 
 		val, err = v.Capabilities.ToTerraformValue(ctx)
 
@@ -1870,6 +1917,14 @@ func (v SpecValue) ToTerraformValue(ctx context.Context) (tftypes.Value, error) 
 		}
 
 		vals["enabled"] = val
+
+		val, err = v.Instructions.ToTerraformValue(ctx)
+
+		if err != nil {
+			return tftypes.NewValue(objectType, tftypes.UnknownValue), err
+		}
+
+		vals["instructions"] = val
 
 		if err := tftypes.ValidateValue(objectType, vals); err != nil {
 			return tftypes.NewValue(objectType, tftypes.UnknownValue), err
@@ -1925,7 +1980,8 @@ func (v SpecValue) ToObjectValue(ctx context.Context) (basetypes.ObjectValue, di
 		"capabilities": basetypes.ObjectType{
 			AttrTypes: CapabilitiesValue{}.AttributeTypes(ctx),
 		},
-		"enabled": basetypes.BoolType{},
+		"enabled":      basetypes.BoolType{},
+		"instructions": basetypes.StringType{},
 	}
 
 	if v.IsNull() {
@@ -1941,6 +1997,7 @@ func (v SpecValue) ToObjectValue(ctx context.Context) (basetypes.ObjectValue, di
 		map[string]attr.Value{
 			"capabilities": capabilities,
 			"enabled":      v.Enabled,
+			"instructions": v.Instructions,
 		})
 
 	return objVal, diags
@@ -1969,6 +2026,10 @@ func (v SpecValue) Equal(o attr.Value) bool {
 		return false
 	}
 
+	if !v.Instructions.Equal(other.Instructions) {
+		return false
+	}
+
 	return true
 }
 
@@ -1985,7 +2046,8 @@ func (v SpecValue) AttributeTypes(ctx context.Context) map[string]attr.Type {
 		"capabilities": basetypes.ObjectType{
 			AttrTypes: CapabilitiesValue{}.AttributeTypes(ctx),
 		},
-		"enabled": basetypes.BoolType{},
+		"enabled":      basetypes.BoolType{},
+		"instructions": basetypes.StringType{},
 	}
 }
 

@@ -31,10 +31,6 @@ description: |-
 <a id="nestedatt--items"></a>
 ### Nested Schema for `items`
 
-Optional:
-
-- `spec` (Attributes) MCPPromptTemplateSpec defines the desired state of PromptTemplate (see [below for nested schema](#nestedatt--items--spec))
-
 Read-Only:
 
 - `alarms` (Attributes) (see [below for nested schema](#nestedatt--items--alarms))
@@ -42,55 +38,8 @@ Read-Only:
 - `deviations` (Attributes) (see [below for nested schema](#nestedatt--items--deviations))
 - `kind` (String)
 - `metadata` (Attributes) (see [below for nested schema](#nestedatt--items--metadata))
+- `spec` (Attributes) MCPPromptTemplateSpec defines the desired state of PromptTemplate (see [below for nested schema](#nestedatt--items--spec))
 - `status` (Attributes) MCPPromptTemplateStatus defines the observed state of PromptTemplate (see [below for nested schema](#nestedatt--items--status))
-
-<a id="nestedatt--items--spec"></a>
-### Nested Schema for `items.spec`
-
-Optional:
-
-- `arguments` (Attributes List) List of arguments for the prompt (see [below for nested schema](#nestedatt--items--spec--arguments))
-- `content` (Attributes List) The prompt template with placeholders for arguments in {{argName}} format. (see [below for nested schema](#nestedatt--items--spec--content))
-- `description` (String) A brief description of the prompt
-- `title` (String) A human friendly title for the prompt
-
-<a id="nestedatt--items--spec--arguments"></a>
-### Nested Schema for `items.spec.arguments`
-
-Optional:
-
-- `description` (String) A brief description of the argument
-- `name` (String) Argument name to be used in the prompt template
-- `required` (Boolean) Whether the argument is required
-- `title` (String) A human friendly title for the argument
-
-
-<a id="nestedatt--items--spec--content"></a>
-### Nested Schema for `items.spec.content`
-
-Optional:
-
-- `resource` (Attributes) Resource content (see [below for nested schema](#nestedatt--items--spec--content--resource))
-- `text` (Attributes) Text content (see [below for nested schema](#nestedatt--items--spec--content--text))
-- `type` (String) The content type
-
-<a id="nestedatt--items--spec--content--resource"></a>
-### Nested Schema for `items.spec.content.resource`
-
-Optional:
-
-- `uri` (String) The resource URI
-
-
-<a id="nestedatt--items--spec--content--text"></a>
-### Nested Schema for `items.spec.content.text`
-
-Optional:
-
-- `template` (String) The text content template
-
-
-
 
 <a id="nestedatt--items--alarms"></a>
 ### Nested Schema for `items.alarms`
@@ -120,6 +69,62 @@ Read-Only:
 - `labels` (Map of String)
 - `name` (String)
 - `namespace` (String)
+
+
+<a id="nestedatt--items--spec"></a>
+### Nested Schema for `items.spec`
+
+Read-Only:
+
+- `arguments` (Attributes List) List of arguments for the prompt (see [below for nested schema](#nestedatt--items--spec--arguments))
+- `content` (Attributes List) The prompt template with placeholders for arguments in {{argName}} format. (see [below for nested schema](#nestedatt--items--spec--content))
+- `description` (String) A brief description of the prompt
+- `enabled` (Boolean) Whether the prompt template is enabled
+- `title` (String) A human friendly title for the prompt
+
+<a id="nestedatt--items--spec--arguments"></a>
+### Nested Schema for `items.spec.arguments`
+
+Read-Only:
+
+- `autocomplete` (String) Autocomplete string for the argument
+Examples:
+- '{"type":"gvr", "group":"core.eda.nokia.com", "version":"v1", "resource":"namespaces"}'
+- '{"type":"query", "table":".namespace.node.srl", "field": ".namespace.node.name", "where": "version = \"26.3.1\""}'
+- '{"type":"labelselector", "group":"core.eda.nokia.com", "kind":"TopoNode"}'
+- `choices` (List of String) Choices for the argument
+- `default` (String) Whether the argument is hidden
+- `description` (String) A brief description of the argument
+- `name` (String) Argument name to be used in the prompt template
+- `required` (Boolean) Whether the argument is required
+- `title` (String) A human friendly title for the argument
+
+
+<a id="nestedatt--items--spec--content"></a>
+### Nested Schema for `items.spec.content`
+
+Read-Only:
+
+- `resource` (Attributes) Resource content (see [below for nested schema](#nestedatt--items--spec--content--resource))
+- `text` (Attributes) Text content (see [below for nested schema](#nestedatt--items--spec--content--text))
+- `type` (String) The content type
+
+<a id="nestedatt--items--spec--content--resource"></a>
+### Nested Schema for `items.spec.content.resource`
+
+Read-Only:
+
+- `uri` (String) The resource URI
+
+
+<a id="nestedatt--items--spec--content--text"></a>
+### Nested Schema for `items.spec.content.text`
+
+Read-Only:
+
+- `template` (String) The text content template
+
+
 
 
 <a id="nestedatt--items--status"></a>

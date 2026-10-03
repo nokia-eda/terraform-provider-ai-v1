@@ -31,10 +31,6 @@ description: |-
 <a id="nestedatt--items"></a>
 ### Nested Schema for `items`
 
-Optional:
-
-- `spec` (Attributes) MCPSettingsSpec defines the desired state of MCPSettings (see [below for nested schema](#nestedatt--items--spec))
-
 Read-Only:
 
 - `alarms` (Attributes) (see [below for nested schema](#nestedatt--items--alarms))
@@ -42,29 +38,8 @@ Read-Only:
 - `deviations` (Attributes) (see [below for nested schema](#nestedatt--items--deviations))
 - `kind` (String)
 - `metadata` (Attributes) (see [below for nested schema](#nestedatt--items--metadata))
+- `spec` (Attributes) MCPSettingsSpec defines the desired state of MCPSettings (see [below for nested schema](#nestedatt--items--spec))
 - `status` (Attributes) MCPSettingsStatus defines the observed state of MCPSettings (see [below for nested schema](#nestedatt--items--status))
-
-<a id="nestedatt--items--spec"></a>
-### Nested Schema for `items.spec`
-
-Optional:
-
-- `capabilities` (Attributes) MCP capabilities (see [below for nested schema](#nestedatt--items--spec--capabilities))
-- `enabled` (Boolean) Enable EDA MCP Server
-
-<a id="nestedatt--items--spec--capabilities"></a>
-### Nested Schema for `items.spec.capabilities`
-
-Optional:
-
-- `enable_completions` (Boolean) Enable completions
-- `enable_logging` (Boolean) Enable logging
-- `prompt_list_changed_notifications` (Boolean) Prompt list changed notifications Support
-- `resource_list_changed_notifications` (Boolean) Resource list changed notifications Support
-- `resource_subscribe_support` (Boolean) Resource subscribe support
-- `tool_list_changed_notifications` (Boolean) Tool list changed notifications Support
-
-
 
 <a id="nestedatt--items--alarms"></a>
 ### Nested Schema for `items.alarms`
@@ -94,6 +69,29 @@ Read-Only:
 - `labels` (Map of String)
 - `name` (String)
 - `namespace` (String)
+
+
+<a id="nestedatt--items--spec"></a>
+### Nested Schema for `items.spec`
+
+Read-Only:
+
+- `capabilities` (Attributes) MCP capabilities (see [below for nested schema](#nestedatt--items--spec--capabilities))
+- `enabled` (Boolean) Enable EDA MCP Server
+- `instructions` (String) MCP Server Instructions
+
+<a id="nestedatt--items--spec--capabilities"></a>
+### Nested Schema for `items.spec.capabilities`
+
+Read-Only:
+
+- `enable_completions` (Boolean) Enable completions
+- `enable_logging` (Boolean) Enable logging
+- `prompt_list_changed_notifications` (Boolean) Prompt list changed notifications Support
+- `resource_list_changed_notifications` (Boolean) Resource list changed notifications Support
+- `resource_subscribe_support` (Boolean) Resource subscribe support
+- `tool_list_changed_notifications` (Boolean) Tool list changed notifications Support
+
 
 
 <a id="nestedatt--items--status"></a>

@@ -5,6 +5,12 @@ datasources:
   - model_name: resource_list
     oas_endpoint: /apps/ai.core.eda.nokia.com/v1
     oas_schema: ResourceList
+  - model_name: mcp_client_list
+    oas_endpoint: /apps/ai.core.eda.nokia.com/v1/mcpclients
+    oas_schema: com.nokia.eda.core.ai.v1.MCPClientList
+  - model_name: mcp_client
+    oas_endpoint: /apps/ai.core.eda.nokia.com/v1/mcpclients/{name}
+    oas_schema: com.nokia.eda.core.ai.v1.MCPClient
   - model_name: mcp_prompt_template_list
     oas_endpoint: /apps/ai.core.eda.nokia.com/v1/mcpprompttemplates
     oas_schema: com.nokia.eda.core.ai.v1.MCPPromptTemplateList
@@ -37,6 +43,9 @@ datasources:
     oas_schema: com.nokia.eda.core.ai.v1.Provider
 
 resources:
+  - model_name: mcp_client
+    oas_endpoint: /apps/ai.core.eda.nokia.com/v1/mcpclients
+    oas_schema: com.nokia.eda.core.ai.v1.MCPClient
   - model_name: mcp_prompt_template
     oas_endpoint: /apps/ai.core.eda.nokia.com/v1/mcpprompttemplates
     oas_schema: com.nokia.eda.core.ai.v1.MCPPromptTemplate
@@ -56,11 +65,13 @@ resources:
 qualified:
   datasources:
     - oas_schema: IntentTargets
-      get: /apps/ai.core.eda.nokia.com/v1/mcpprompttemplates/{name}/_targets
+      get: /apps/ai.core.eda.nokia.com/v1/mcpclients/{name}/_targets
     - oas_schema: ResourceHistory
-      get: /apps/ai.core.eda.nokia.com/v1/mcpprompttemplates/{name}/_revs
+      get: /apps/ai.core.eda.nokia.com/v1/mcpclients/{name}/_revs
     - oas_schema: UIResult
       get: /apps/ai.core.eda.nokia.com/v1/_ui/{pathname}
+    - oas_schema: com.nokia.eda.core.ai.v1.MCPClient_DeletedResources
+      get: /apps/ai.core.eda.nokia.com/v1/mcpclients/_deleted
     - oas_schema: com.nokia.eda.core.ai.v1.MCPPromptTemplate_DeletedResources
       get: /apps/ai.core.eda.nokia.com/v1/mcpprompttemplates/_deleted
     - oas_schema: com.nokia.eda.core.ai.v1.MCPResourceDefinition_DeletedResources

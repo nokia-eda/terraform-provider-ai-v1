@@ -7,6 +7,16 @@ data_sources:
       path: /apps/ai.core.eda.nokia.com
       method: GET
 
+  mcp_client:
+    read:
+      path: /apps/ai.core.eda.nokia.com/v1/mcpclients/{name}
+      method: GET
+
+  mcp_client_list:
+    read:
+      path: /apps/ai.core.eda.nokia.com/v1/mcpclients
+      method: GET
+
   mcp_prompt_template:
     read:
       path: /apps/ai.core.eda.nokia.com/v1/mcpprompttemplates/{name}
@@ -63,6 +73,20 @@ data_sources:
       method: GET
 
 resources:
+  mcp_client:
+    create:
+      path: /apps/ai.core.eda.nokia.com/v1/mcpclients
+      method: POST
+    read:
+      path: /apps/ai.core.eda.nokia.com/v1/mcpclients/{name}
+      method: GET
+    update:
+      path: /apps/ai.core.eda.nokia.com/v1/mcpclients/{name}
+      method: PUT
+    delete:
+      path: /apps/ai.core.eda.nokia.com/v1/mcpclients/{name}
+      method: DELETE
+
   mcp_prompt_template:
     create:
       path: /apps/ai.core.eda.nokia.com/v1/mcpprompttemplates
